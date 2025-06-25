@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titles %}
+    Techlink | Perfil do Professor
+{% endblock %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+
+<main class="w-full">
+  <div class="h-[280px] w-full absolute" style="background-color: #FDFCF6;">
+    <div class="w-2/3 mx-auto bg-white border border-gray-300 relative top-25">
+      <div class="flex justify-between items-center py-6 px-10">
+        <div class="flex gap-5 items-center">
+          {% if usuario.foto_perfil %}
+              <img src="{{ usuario.foto_perfil.url }}" alt="Imagem perfil" class="h-[100px] w-[100px] rounded-full object-cover">
+          {% endif %}
+          <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            {{ foto_form.non_field_errors }}
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Alterar foto de perfil</label>
+              {{ foto_form.foto_perfil }}
+              {{ foto_form.foto_perfil.errors }}
+            </div>
+
+            <button type="submit" name="submit_foto" class="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700">Salvar Foto</button>
+          </form>
+          <span class="text-gray-900 text-xl font-semibold">{{ request.user.nome }} {{ request.user.sobrenome }}</span>
+        </div>
+        <div>
+          <button class="bg-red-100 text-red-800 py-4 px-6 font-semibold flex gap-3 items-center cursor-pointer hover:bg-red-400 transition duration-300">Painel do Instrutor <i class="fa-solid fa-arrow-right" style="color: #9E0000;"></i></button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-32 w-full justify-center py-4 border-gray-300 border-t">
+        <span class="text-gray-700 font-medium">Instrutores</span>
+        <span class="text-gray-700 font-medium">Configurações</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulário de dados pessoais -->
+  <div class="w-2/3 mx-auto bg-white border border-gray-300 mt-72 p-10 mb-10">
+    <h2 class="text-2xl font-semibold mb-6">Editar Conta</h2>
+    
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      {{ profile_form.non_field_errors }}
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Foto de perfil</label>
+        {{ profile_form.foto_perfil }}
+        {{ profile_form.foto_perfil.errors }}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Email:</label>
+        {{ profile_form.email }}
+        {{ profile_form.email.errors }}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Nome:</label>
+        {{ profile_form.nome }}
+        {{ profile_form.nome.errors }}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Sobrenome:</label>
+        {{ profile_form.sobrenome }}
+        {{ profile_form.sobrenome.errors }}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Celular:</label>
+        {{ profile_form.num_celular }}
+        {{ profile_form.num_celular.errors }}
+      </div>
+
+      <div class="pt-4">
+        <button type="submit" name="submit_perfil" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Salvar Dados Pessoais</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Formulário de alteração de senha -->
+  <div class="w-2/3 mx-auto bg-white border border-gray-300 p-10 mb-10">
+    <h2 class="text-2xl font-semibold mb-6">Trocar senha</h2>
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      {{ password_form.non_field_errors }}
+
+      <div>
+          <label class="block text-sm font-medium text-gray-700">Senha atual</label>
+          {{ password_form.old_password }}
+          {{ password_form.old_password.errors }}
+      </div>
+
+      <div>
+          <label class="block text-sm font-medium text-gray-700">Nova senha</label>
+          {{ password_form.new_password1 }}
+          {{ password_form.new_password1.errors }}
+      </div>
+
+      <div>
+          <label class="block text-sm font-medium text-gray-700">Confirme a nova senha</label>
+          {{ password_form.new_password2 }}
+          {{ password_form.new_password2.errors }}
+      </div>
+
+      <button type="submit" name="submit_password" class="bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700">Alterar Senha</button>
+    </form>
+  </div>
+
+  <!-- Formulário de dados de professor -->
+  <div class="w-2/3 mx-auto bg-white border border-gray-300 p-10 mb-10">
+    <h2 class="text-2xl font-semibold mb-6">Editar Perfil de Professor</h2>
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      {{ professor_form.non_field_errors }}
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Formação:</label>
+        {{ professor_form.formacao }}
+        {{ professor_form.formacao.errors }}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Apresentação:</label>
+        {{ professor_form.apresentacao }}
+        {{ professor_form.apresentacao.errors }}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Valor Hora:</label>
+        {{ professor_form.valor_hora }}
+        {{ professor_form.valor_hora.errors }}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Áreas de Conhecimento:</label>
+        {{ professor_form.areas_conhecimento }}
+        {{ professor_form.areas_conhecimento.errors }}
+      </div>
+
+      <div class="pt-4">
+        <button type="submit" name="submit_professor" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">Salvar Perfil de Professor</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+{% endblock %}

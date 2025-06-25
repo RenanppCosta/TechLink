@@ -1,0 +1,24 @@
+<h2>Buscar Professores</h2>
+
+<form method="get" action="{% url 'techlink:buscar' %}">
+    <input type="text" name="q" placeholder="Nome ou área de conhecimento" value="{{ request.GET.q }}" class="form-control mb-3">
+    <button type="submit" class="btn btn-primary">Buscar</button>
+</form>
+
+{% if professores %}
+    <ul class="list-group mt-3">
+        {% for prof in professores %}
+            <li class="list-group-item">
+                <strong>{{ prof.usuario.nome }} {{ prof.usuario.sobrenome }}</strong><br>
+                {% if usuario.foto_perfil %}
+                    <img src="{{ usuario.foto_perfil.url }}" alt="Imagem perfil" class="h-[100px] w-[100px] rounded-full object-cover">
+                {% endif %}
+                Formação: {{ prof.formacao }}<br>
+                Áreas de conhecimento: {{ prof.areas_conhecimento }}<br>
+                Valor/hora: R$ {{ prof.valor_hora }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class="mt-3">Nenhum professor encontrado.</p>
+{% endif %}
