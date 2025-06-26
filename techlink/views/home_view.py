@@ -1,11 +1,14 @@
 from django.shortcuts import render
-from accounts.models import ProfessorProfile 
+from django.views import View
+from django.db.models import Q
+from accounts.models import PerfilProfessor
 
-def home_page(request):
-    professores = ProfessorProfile.objects.select_related('usuario').all()[:6]
 
+class HomePageView(View):
+    template_name = 'techlink/home.html'
     context = {
-        'professores': professores
+        'professores': PerfilProfessor.objects.select_related('usuario').all()[:6]
     }
 
-    return render(request, 'techlink/home.html', context)
+    def get(self, request):
+        return render(request, self.template_name)

@@ -9,7 +9,7 @@ class CustomUserCreationForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'nome', 'sobrenome', 'num_celular', 'tipo','profile_picture']
+        fields = ['email', 'nome', 'sobrenome', 'num_celular', 'tipo']
         widgets = {
             'telefone': forms.TextInput(attrs={
                 'placeholder': 'Ex: (21) 98765-4321'
@@ -41,7 +41,7 @@ class UserProfileUpdateForm(forms.ModelForm):
     """
     class Meta:
         model = CustomUser
-        fields = ['profile_picture', 'nome', 'sobrenome', 'email', 'num_celular']
+        fields = ['foto_perfil', 'nome', 'sobrenome', 'email', 'num_celular']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -87,4 +87,3 @@ class CustomPasswordChangeForm(PasswordChangeForm):
             'class': 'w-full px-4 py-2 mt-2 text-gray-500 bg-white border border-gray-200 mb-5 outline-none',
             'placeholder': '••••••••'
         })
-

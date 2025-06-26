@@ -1,73 +1,41 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Buscar Professores</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            padding: 8px;
-            width: 300px;
-        }
-        button {
-            padding: 8px 12px;
-        }
-        .professor {
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Buscar Professores</h1>
+{% extends "base.html" %}
+{% load static %}
 
-    <form method="get">
-        <input type="text" name="q" placeholder="Buscar por palavra-chave na apresentação" value="{{ request.GET.q }}">
-        <button type="submit">Pesquisar</button>
-    </form>
+{% block titles %}
+    Techlink | Perfil
+{% endblock %}
 
-    {% if professores %}
-        {% for professor in professores %}
-            <div class="professor">
-                <h2>{{ professor.usuario.nome }}</h2>
-                <p><strong>Apresentação:</strong> {{ professor.apresentacao }}</p>
-                <p><strong>Valor/hora:</strong> R$ {{ professor.valor_hora }}</p>
-            </div>
+
+{% block styles %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<h2>Buscar Professores</h2>
+
+<form method="get" action="{% url 'techlink:buscar' %}">
+    <input type="text" name="q" placeholder="Nome ou área de conhecimento" value="{{ request.GET.q }}" class="form-control mb-3">
+    <button type="submit" class="btn btn-primary">Buscar</button>
+</form>
+
+{% if professores %}
+    <ul class="list-group mt-3">
+        {% for prof in professores %}
+            <li class="list-group-item">
+                <strong>{{ prof.usuario.nome }} {{ prof.usuario.sobrenome }}</strong><br>
+                {% if usuario.foto_perfil %}
+                    <img src="{{ usuario.foto_perfil.url }}" alt="Imagem perfil" class="h-[100px] w-[100px] rounded-full object-cover">
+                {% endif %}
+                Formação: {{ prof.formacao }}<br>
+                Áreas de conhecimento: {{ prof.areas_conhecimento }}<br>
+                Valor/hora: R$ {{ prof.valor_hora }}
+            </li>
         {% endfor %}
-    {% else %}
-        <p>Nenhum professor encontrado com esse termo.</p>
-    {% endif %}
+    </ul>
+{% else %}
+    <p class="mt-3">Nenhum professor encontrado.</p>
+{% endif %}
 
-
-            <!-- ESTAVA NA PAGINA HOME -->
-    
-    <!-- <form method="get" action="{% url 'techlink:buscar' %}">
-        <input type="text" name="q" placeholder="Nome ou área de conhecimento" value="{{ request.GET.q }}" class="form-control mb-3">
-        <button type="submit" class="btn btn-primary">Buscar</button>
-    </form>
-
-    {% if professores %}
-        <ul class="list-group mt-3">
-            {% for prof in professores %}
-                <li class="list-group-item">
-                    <strong>{{ prof.usuario.nome }} {{ prof.usuario.sobrenome }}</strong><br>
-                    Formação: {{ prof.formacao }}<br>
-                    Áreas de conhecimento: {{ prof.areas_conhecimento }}<br>
-                    Valor/hora: R$ {{ prof.valor_hora }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p class="mt-3">Nenhum professor encontrado.</p>
-    {% endif %} -->
-
-    
-</body>
-</html>
+{% endblock %}

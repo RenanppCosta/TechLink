@@ -1,3 +1,4 @@
 from .login_view import LoginView
 from .register_view import RegisterView
 from .user_profile_edit_view import UserProfileEditView
+from .professor_create_profile_view import ProfessorCreateProfileView

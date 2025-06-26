@@ -1,9 +1,9 @@
 from django import forms
-from accounts.models import ProfessorProfile
+from accounts.models import PerfilProfessor
 
-class ProfessorProfileForm(forms.ModelForm):
+class PerfilProfessorForm(forms.ModelForm):
     class Meta:
-        model = ProfessorProfile
+        model = PerfilProfessor
         fields = ['formacao', 'apresentacao', 'valor_hora', 'areas_conhecimento']
         widgets = {
             'formacao': forms.Textarea(attrs={'class': 'form-control'}),

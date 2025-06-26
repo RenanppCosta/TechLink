@@ -2,7 +2,7 @@ from django.db import models
 from .custom_user import CustomUser
 
 
-class ProfessorProfile(models.Model):
+class PerfilProfessor(models.Model):
     usuario = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='professor_profile')
     formacao = models.TextField()
     apresentacao = models.TextField()
