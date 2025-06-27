@@ -56,70 +56,81 @@
   <div class="w-full flex justify-center flex-col mt-[350px] max-w-[1320px] px-4 mb-8">
     <h2 class="font-semibold text-gray-900 text-3xl mb-8">Configurações</h2>
     
-    <div>
-        <form method="post" enctype="multipart/form-data" class="flex-col flex lg:flex-row gap-8 lg:gap-32 w-full">
-          {% csrf_token %}
-          <div class="flex items-center justify-center">
-            <div class="image-upload-container">
-    
-            <input type="file" name="{{ profile_form.profile_picture.name }}" id="{{ profile_form.profile_picture.id_for_label }}" class="hidden-file-input">
-            
-            <div class="relative">
-              <img id="image-preview" 
-                src="{% if usuario.profile_picture %}{{ usuario.profile_picture.url }}{% else %}{% static 'img/default-avatar.jpg' %}{% endif %}" 
-                alt="Foto de Perfil" 
-                class="profile-pic">
-                <label for="{{ profile_form.profile_picture.id_for_label }}" class="upload-label">
-                <i class="fa-solid fa-arrow-up-from-bracket"></i> <span>Upload Photo</span>
-              </label>
-            </div>
-            
+    <div class="flex flex-col lg:flex-row gap-12 w-full items-start">
+      <!-- Formulário da foto -->
+      <form method="post" enctype="multipart/form-data" class="flex flex-col items-center gap-4">
+        {% csrf_token %}
 
-            {% if profile_form.profile_picture.errors %}
-                <div class="image-errors">
-                    {{ profile_form.profile_picture.errors.as_text }}
-                </div>
+        <div class="relative w-[150px] h-[150px] rounded overflow-hidden shadow-md">
+          <img 
+            id="image-preview"
+            src="{% if usuario.profile_picture %}{{ usuario.profile_picture.url }}{% else %}{% static 'img/default-avatar.jpg' %}{% endif %}" 
+            alt="Foto de Perfil"
+            class="w-full h-full object-cover rounded">
+
+          <label for="{{ foto_form.foto_perfil.id_for_label }}"
+                class="absolute bottom-0 w-full bg-black bg-opacity-70 text-white text-center py-2 text-sm font-medium cursor-pointer">
+            <i class="fa-solid fa-arrow-up-from-bracket mr-1"></i> Escolher foto
+          </label>
+
+          <input type="file"
+                name="{{ foto_form.foto_perfil.name }}"
+                id="{{ foto_form.foto_perfil.id_for_label }}"
+                class="hidden"
+                onchange="previewImage(this)">
+        </div>
+
+        {% if foto_form.foto_perfil.errors %}
+          <p class="text-red-600 text-sm mt-2">{{ foto_form.foto_perfil.errors }}</p>
+        {% endif %}
+
+        <button type="submit" name="submit_foto" class="py-4 px-6 bg-red-900 text-white font-medium flex gap-3 items-center cursor-pointer hover:bg-red-800 transition duration-300">
+          Salvar Foto
+        </button>
+      </form>
+
+      <!-- Formulário dos dados do usuário -->
+      <form method="post" enctype="multipart/form-data" class="flex-1 w-full">
+        {% csrf_token %}
+        <div class="flex gap-6 mb-4">
+          <div class="flex-1">
+            <label for="{{ profile_form.nome.id_for_label }}" class="text-gray-900">Nome</label>
+            {{ profile_form.nome }}
+            {% if profile_form.nome.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ profile_form.nome.errors.as_text }}</p>
             {% endif %}
-            </div>
           </div>
 
           <div class="flex-1">
-              <div class="flex gap-6">
-                <div class="flex-1">
-                    <label for="{{ profile_form.nome.id_for_label }}" class="text-gray-900">Nome</label>
-                    {{ profile_form.nome }}
-                    {% if profile_form.nome.errors %}
-                      <p class="text-red-500 text-sm mt-1">{{ profile_form.nome.errors.as_text }}</p>
-                    {% endif %}
-                </div>
-                
-                <div class="flex-1">
-                  <label for="{{ profile_form.sobrenome.id_for_label }}" class="text-gray-900">Sobrenome</label>
-                  {{ profile_form.sobrenome }}
-                  {% if profile_form.sobrenome.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ profile_form.sobrenome.errors.as_text }}</p>
-                  {% endif %}
-                </div>
-            </div>
-            <div>
-              <label for="{{ profile_form.num_celular.id_for_label }}" class="text-gray-900">Telefone</label>
-                  {{ profile_form.num_celular }}
-                  {% if profile_form.num_celular.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ profile_form.num_celular.errors.as_text }}</p>
-                  {% endif %}
-            </div>
-
-            <div>
-              <label for="{{ profile_form.email.id_for_label }}" class="text-gray-900">Email</label>
-                  {{ profile_form.email }}
-                  {% if profile_form.email.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ profile_form.email.errors.as_text }}</p>
-                  {% endif %}
-            </div>
-
-            <button type="submit" name="submit_perfil" class="py-4 px-6 bg-red-900 text-white font-medium flex gap-3 items-center cursor-pointer hover:bg-red-800 transition duration-300">Salvar</button>
+            <label for="{{ profile_form.sobrenome.id_for_label }}" class="text-gray-900">Sobrenome</label>
+            {{ profile_form.sobrenome }}
+            {% if profile_form.sobrenome.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ profile_form.sobrenome.errors.as_text }}</p>
+            {% endif %}
           </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="{{ profile_form.num_celular.id_for_label }}" class="text-gray-900">Telefone</label>
+          {{ profile_form.num_celular }}
+          {% if profile_form.num_celular.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ profile_form.num_celular.errors.as_text }}</p>
+          {% endif %}
+        </div>
+
+        <div class="mb-6">
+          <label for="{{ profile_form.email.id_for_label }}" class="text-gray-900">Email</label>
+          {{ profile_form.email }}
+          {% if profile_form.email.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ profile_form.email.errors.as_text }}</p>
+          {% endif %}
+        </div>
+
+        <button type="submit" name="submit_perfil" class="py-4 px-6 bg-red-900 text-white font-medium flex gap-3 items-center cursor-pointer hover:bg-red-800 transition duration-300">
+          Salvar
+        </button>
         </form>
+
     </div>
   </div>
 
