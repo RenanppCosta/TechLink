@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block titles %}
-    Techlink | Perfil
+    Techlink | Home
 {% endblock %}
 
 
@@ -22,20 +22,18 @@
         </a>
     </header>
 
-    <div class="max-w-6xl mx-auto mt-16 px-4 flex flex-wrap lg:flex-nowrap gap-8 justify-center items-stretch">
+    <div class="max-w-[1320px] mx-auto mt-16 px-4 flex flex-wrap lg:flex-nowrap gap-8 justify-center items-stretch">
 
-        <div class="bg-[#752E2B] text-white flex items-stretch flex-1 basis-[500px] w-full max-w-[90%] lg:max-w-none">
-            <div class="flex flex-col lg:flex-row justify-between items-center lg:items-stretch w-full p-8 gap-4 text-center lg:text-left">
+        <div class="bg-[#752E2B] text-white flex items-stretch flex-1 basis-[500px] w-full max-w-[90%] md:h-[292px] lg:max-w-none relative">
+            <div class="flex flex-col lg:flex-row justify-between items-center lg:items-stretch w-full lg:max-w-[650px] p-8 gap-4 text-center lg:text-left ">
                 <div class="flex flex-col justify-center">
                     <h2 class="text-3xl font-bold mb-4">Torne-se um instrutor</h2>
-                    <p class="mb-8 text-base leading-relaxed">Instrutores de todo o mundo ensinam milhões de alunos na TechLink. Nós fornecemos as ferramentas e habilidades para que você possa ensinar o que ama.</p>
+                    <p class="mb-8 text-base leading-relaxed lg:max-w-[360px]">Instrutores de todo o mundo ensinam milhões de alunos na TechLink. Nós fornecemos as ferramentas e habilidades para que você possa ensinar o que ama.</p>
                     <a href="#" class="self-center lg:self-start">
                         <button class="bg-white text-[#752E2B] border-none py-3 px-6 font-medium text-base cursor-pointer transition-colors hover:bg-gray-200">Comece A Ensinar <i class="fa-solid fa-arrow-right" style="color: #752E2B;"></i></button>
                     </a>
                 </div>
-                <div class="flex items-center justify-center mt-4 lg:mt-0 h-[280px]">
-                    <img src="img/instrutor.png" alt="Homem apontando" class="h-full max-h-[180px] lg:max-h-[280px] object-contain">
-                </div>
+                    <img src="{% static 'img/instrutor.png' %}" alt="Homem apontando" class="h-full hidden md:block max-h-[180px] xl:max-h-[280px] absolute right-0 bottom-0">
             </div>
         </div>
 
