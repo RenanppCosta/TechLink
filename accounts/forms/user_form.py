@@ -3,6 +3,12 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.forms import PasswordChangeForm
 from accounts.models import CustomUser
 
+# accounts/forms.py
+from django import forms
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.forms import PasswordChangeForm
+from accounts.models import CustomUser
+
 class CustomUserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Senha', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirme a senha', widget=forms.PasswordInput)
@@ -18,8 +24,22 @@ class CustomUserCreationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
+
+       
+        tailwind_classes = 'w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 outline-none'
+
+   
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({'class': tailwind_classes})
+
+
+        self.fields['nome'].widget.attrs.update({'placeholder': 'Primeiro nome'})
+        self.fields['sobrenome'].widget.attrs.update({'placeholder': 'Último nome'})
+        self.fields['email'].widget.attrs.update({'placeholder': 'Email'})
+        self.fields['num_celular'].widget.attrs.update({'placeholder': 'Telefone'})
+        self.fields['password1'].widget.attrs.update({'placeholder': '••••••••'})
+        self.fields['password2'].widget.attrs.update({'placeholder': '••••••••'})
+
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -34,6 +54,7 @@ class CustomUserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
 
 class UserProfileUpdateForm(forms.ModelForm):
     """

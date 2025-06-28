@@ -1,84 +1,163 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block titles %}
-    Techlink | Registro
+    Techlink | Criar Conta
 {% endblock %}
 
 
 {% block styles %}
-    
+    <style>
+        /* Pequeno ajuste para a transição suave do seletor de tipo de usuário */
+        .seletor-opcao {
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
 {% endblock %}
+
 
 
 {% block content %}
-<div class="card-body d-flex align-items-center flex-column" >
-    <h2 class="card-title m-3 mb-4" >Criar Conta</h2>
-    <form method="post" class="w-75">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
+<main class="w-full flex flex-col items-center py-8 px-6">
+        <div class="w-full max-w-3xl">
+            <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-8">Crie sua conta</h1>
+            
+            <div id="userTypeSelector" class="flex max-w-sm mx-auto mb-8 bg-gray-200 p-1 rounded-lg gap-1">
+    
+                <button type="button" 
+                        data-value="aluno" 
+                        class="user-type-btn w-1/2 text-center py-2 rounded-md cursor-pointer font-semibold transition-colors duration-200">
+                    Aluno
+                </button>
+                
+                <button type="button" 
+                        data-value="professor" 
+                        class="user-type-btn w-1/2 text-center py-2 rounded-md cursor-pointer font-semibold transition-colors duration-200">
+                    Professor
+                </button>
 
-        <div>
-            <label for="id_email">Email:</label>
-            {{ form.email }}
-            {{ form.email.errors }}
-        </div>
-
-        <div>
-            <label for="id_first_name">Nome:</label>
-            {{ form.nome }}
-            {{ form.nome.errors }}
-        </div>
-
-        <div>
-            <label for="id_last_name">Sobrenome:</label>
-            {{ form.sobrenome }}
-            {{ form.sobrenome.errors }}
-        </div>
-
-        <div>
-            <label for="id_cellphone">Celular:</label>
-            {{ form.num_celular }}
-            {{ form.num_celular.errors }}
-        </div>
-
-
-        <div>
-            <label for="id_password1">Senha:</label>
-            {{ form.password1 }}
-            {{ form.password1.errors }}
-        </div>
-
-        <div>
-            <label for="id_password2">Confirme a senha:</label>
-            {{ form.password2 }}
-            {{ form.password2.errors }}
-        </div>
-
-        <div>
-            <label for="tipo">Tipo de conta:</label>
-            {{ form.tipo }}
-            {{ form.tipo.errors }}
-        </div>
-
-        <div class="row my-3">
-            <div class="col-12 d-flex flex-column justify-content-between">
-                <button class="btn btn-success" type="submit">Registrar</button>
             </div>
+            
+            <form id="student-form" class="bg-white flex flex-col gap-6">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col">
+                        <label for="{{ form.nome.id_for_label }}" class="mb-1 text-gray-900">Nome</label>
+                        {{ form.nome }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ form.sobrenome.id_for_label }}" class="mb-1 text-gray-900 invisible">Sobrenome</label>
+                        {{form.sobrenome}}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col">
+                        <label for="{{ form.num_celular.id_for_label }}" class="mb-1 text-gray-900">Telefone</label>
+                        {{ form.num_celular }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ form.email.id_for_label }}" class="mb-1 text-gray-900">Email</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col">
+                        <label for="{{ form.password1.id_for_label }}" class="mb-1 text-gray-900">Senha</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ form.password2.id_for_label }}" class="mb-1 text-gray-900">Confirmação de senha</label>
+                        {{ form.password2 }}
+                    </div>
+                </div>
+                <button type="submit" class="w-52 mx-auto py-3 mt-4 bg-red-900 text-white font-semibold flex gap-3 items-center justify-center cursor-pointer hover:bg-red-800 transition duration-300">
+                    <span>Criar Conta</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </button>
+            </form>
+
+            <form id="teacher-form" class="bg-white flex-col gap-6 hidden">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="flex flex-col">
+                        <label for="{{ form.nome.id_for_label }}" class="mb-1 text-gray-900">Nome</label>
+                        {{ form.nome }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ form.sobrenome.id_for_label }}" class="mb-1 text-gray-900 invisible">Sobrenome</label>
+                        {{form.sobrenome}}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="flex flex-col">
+                        <label for="{{ form.num_celular.id_for_label }}" class="mb-1 text-gray-900">Telefone</label>
+                        {{ form.num_celular }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ form.email.id_for_label }}" class="mb-1 text-gray-900">Email</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+                <div class="flex flex-col mb-6">
+                    <label for="teacher-theme" class="mb-1 text-gray-900">Tema</label>
+                    <input type="text" id="teacher-theme" placeholder="Ex: Inteligência Artificial na Educação" class="w-full p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-800">
+                </div>
+                <div class="flex flex-col mb-6">
+                    <label for="teacher-presentation" class="mb-1 text-gray-900">Apresentação</label>
+                    <textarea id="teacher-presentation" rows="4" placeholder="Fale um pouco sobre você e sua área de atuação..." class="w-full p-3 border border-gray-300 resize-y focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-800"></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="flex flex-col">
+                        <label for="{{ form.password1.id_for_label }}" class="mb-1 text-gray-900">Senha</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="{{ form.password2.id_for_label }}" class="mb-1 text-gray-900">Confirmação de senha</label>
+                        {{ form.password2 }}
+                    </div>
+                </div>
+                <button type="submit" class="w-52 mx-auto py-3 mt-4 bg-red-900 text-white font-semibold flex gap-3 items-center justify-center cursor-pointer hover:bg-red-800 transition duration-300">
+                    <span>Criar Conta</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </button>
+            </form>
         </div>
-        <div class="row my-3">
-            <div class="col-12 d-flex flex-column justify-content-between">
-                <p class="text-muted m-0">Já tem uma conta?</p>
-               <a class="link-body-emphasis black w-50" href="{% url 'accounts:login' %}">Entrar!</a>
-            </div>
-        </div>
-    </form>
-</div>
+    </main>
 
-{% endblock %}
+    <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const studentForm = document.getElementById('student-form');
+                const teacherForm = document.getElementById('teacher-form');
+                const typeButtons = document.querySelectorAll('.user-type-btn');
 
+        
+                function setActiveUserType(selectedValue) {
+                    
+                    typeButtons.forEach(button => {
+                        button.classList.remove('bg-red-900', 'text-white');
+                    
+                        if (button.dataset.value === selectedValue) {
+                            button.classList.add('bg-red-900', 'text-white');
+                        }
+                    });
 
-{% block scripts %}
+                
+                    if (selectedValue === 'aluno') {
+                        studentForm.classList.remove('hidden');
+                        teacherForm.classList.add('hidden');
+                    } else {
+                        studentForm.classList.add('hidden');
+                        teacherForm.classList.remove('hidden');
+                    }
+                }
 
+                setActiveUserType('aluno');
+
+                typeButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        setActiveUserType(this.dataset.value);
+                    });
+                });
+            });
+    </script>
 {% endblock %}
