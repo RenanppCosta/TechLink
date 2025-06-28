@@ -45,81 +45,76 @@
   <div class="w-full flex justify-center flex-col mt-[350px] max-w-[1320px] px-4 mb-8">
     <h2 class="font-semibold text-gray-900 text-3xl mb-8">Configurações</h2>
     
-    <div class="flex flex-col lg:flex-row gap-12 w-full items-start">
-      <!-- Formulário da foto -->
-      <form method="post" enctype="multipart/form-data" class="flex flex-col items-center gap-4">
-        {% csrf_token %}
-        <div class="image-upload-container">
-        <div class="relative">
-          <img 
-            id="image-preview"
-            src="{% if usuario.foto_perfil %}{{ usuario.foto_perfil.url }}{% else %}{% static 'img/default-avatar.jpg' %}{% endif %}" 
-            alt="Foto de Perfil"
-            class="profile-pic">
-
-          <label for="{{ foto_form.foto_perfil.id_for_label }}" class="upload-label">
-            <i class="fa-solid fa-arrow-up-from-bracket"></i> <span>Escolher foto</span>
-          </label>
-
-          <input type="file"
-                accept="image/*"
-                name="{{ foto_form.foto_perfil.name }}"
-                id="{{ foto_form.foto_perfil.id_for_label }}"
-                class="hidden-file-input"
-                onchange="previewImage(this)">
-        </div>
-
-        {% if foto_form.foto_perfil.errors %}
-          <p class="text-red-600 text-sm mt-2">{{ foto_form.foto_perfil.errors }}</p>
-        {% endif %}
-        </div>
-        <button type="submit" name="submit_foto" class="py-4 px-6 bg-red-900 text-white font-medium flex gap-3 items-center cursor-pointer hover:bg-red-800 transition duration-300">
-          Salvar Foto
-        </button>
-        
-      </form>
+    <div class="flex flex-col lg:flex-row gap-12 w-full items-start">       
 
       <!-- Formulário dos dados do usuário -->
       <form method="post" enctype="multipart/form-data" class="flex-1 w-full">
         {% csrf_token %}
-        <div class="flex gap-6 mb-4">
-          <div class="flex-1">
-            <label for="{{ profile_form.nome.id_for_label }}" class="text-gray-900">Nome</label>
-            {{ profile_form.nome }}
-            {% if profile_form.nome.errors %}
-              <p class="text-red-500 text-sm mt-1">{{ profile_form.nome.errors.as_text }}</p>
-            {% endif %}
-          </div>
+        <div class="flex flex-col md:flex-row gap-8 w-full">
+            <!-- Coluna da foto -->
+            <div class="flex flex-col items-center md:w-1/3">
+                <div class="image-upload-container">
+                    <div class="relative">
+                        <img 
+                            id="image-preview"
+                            src="{% if usuario.foto_perfil %}{{ usuario.foto_perfil.url }}{% else %}{% static 'img/default-avatar.jpg' %}{% endif %}" 
+                            alt="Foto de Perfil"
+                            class="profile-pic mb-2">
 
-          <div class="flex-1">
-            <label for="{{ profile_form.sobrenome.id_for_label }}" class="text-gray-900">Sobrenome</label>
-            {{ profile_form.sobrenome }}
-            {% if profile_form.sobrenome.errors %}
-              <p class="text-red-500 text-sm mt-1">{{ profile_form.sobrenome.errors.as_text }}</p>
-            {% endif %}
-          </div>
+                        <label for="{{ profile_form.foto_perfil.id_for_label }}" class="upload-label">
+                            <i class="fa-solid fa-arrow-up-from-bracket"></i> <span>Escolher foto</span>
+                        </label>
+
+                        <input type="file"
+                            accept="image/*"
+                            name="{{ profile_form.foto_perfil.name }}"
+                            id="{{ profile_form.foto_perfil.id_for_label }}"
+                            class="hidden-file-input"
+                            onchange="previewImage(this)">
+                    </div>
+                    {% if profile_form.foto_perfil.errors %}
+                        <p class="text-red-600 text-sm mt-2">{{ profile_form.foto_perfil.errors }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Coluna dos demais campos -->
+            <div class="flex-1">
+                <div class="flex gap-6 mb-4">
+                    <div class="flex-1">
+                        <label for="{{ profile_form.nome.id_for_label }}" class="text-gray-900">Nome</label>
+                        {{ profile_form.nome }}
+                        {% if profile_form.nome.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ profile_form.nome.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="flex-1">
+                        <label for="{{ profile_form.sobrenome.id_for_label }}" class="text-gray-900">Sobrenome</label>
+                        {{ profile_form.sobrenome }}
+                        {% if profile_form.sobrenome.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ profile_form.sobrenome.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="{{ profile_form.num_celular.id_for_label }}" class="text-gray-900">Telefone</label>
+                    {{ profile_form.num_celular }}
+                    {% if profile_form.num_celular.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ profile_form.num_celular.errors.as_text }}</p>
+                    {% endif %}
+                </div>
+                <div class="mb-6">
+                    <label for="{{ profile_form.email.id_for_label }}" class="text-gray-900">Email</label>
+                    {{ profile_form.email }}
+                    {% if profile_form.email.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ profile_form.email.errors.as_text }}</p>
+                    {% endif %}
+                </div>
+                <button type="submit" name="submit_perfil" class="py-4 px-6 bg-red-900 text-white font-medium flex gap-3 items-center cursor-pointer hover:bg-red-800 transition duration-300">
+                    Salvar
+                </button>
+            </div>
         </div>
-
-        <div class="mb-4">
-          <label for="{{ profile_form.num_celular.id_for_label }}" class="text-gray-900">Telefone</label>
-          {{ profile_form.num_celular }}
-          {% if profile_form.num_celular.errors %}
-            <p class="text-red-500 text-sm mt-1">{{ profile_form.num_celular.errors.as_text }}</p>
-          {% endif %}
-        </div>
-
-        <div class="mb-6">
-          <label for="{{ profile_form.email.id_for_label }}" class="text-gray-900">Email</label>
-          {{ profile_form.email }}
-          {% if profile_form.email.errors %}
-            <p class="text-red-500 text-sm mt-1">{{ profile_form.email.errors.as_text }}</p>
-          {% endif %}
-        </div>
-
-        <button type="submit" name="submit_perfil" class="py-4 px-6 bg-red-900 text-white font-medium flex gap-3 items-center cursor-pointer hover:bg-red-800 transition duration-300">
-          Salvar
-        </button>
-        </form>
+    </form>
 
     </div>
   </div>
@@ -165,7 +160,7 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     // Seleciona os elementos do DOM
-    const fileInput = document.getElementById('{{ foto_form.foto_perfil.id_for_label }}');
+    const fileInput = document.getElementById('{{ profile_form.foto_perfil.id_for_label }}');
 
     const imagePreview = document.getElementById('image-preview');
 

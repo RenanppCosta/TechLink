@@ -3,7 +3,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from accounts.models import PerfilProfessor
 from accounts.forms.user_form import CustomPasswordChangeForm, CustomUserCreationForm, UserProfileUpdateForm
-from accounts.forms.foto_perfil_form import FotoPerfilForm
 from accounts.forms.professor_form import PerfilProfessorForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
@@ -26,7 +25,6 @@ class UserProfileEditView(LoginRequiredMixin, TemplateView):
         context['usuario'] = usuario
         context['profile_form'] = UserProfileUpdateForm(instance=usuario)
         context['password_form'] = CustomPasswordChangeForm(user=usuario)
-        context['foto_form'] = FotoPerfilForm(instance=usuario)
 
         if usuario.tipo == 'professor':
             perfil_professor, created = PerfilProfessor.objects.get_or_create(usuario=usuario)
@@ -39,7 +37,7 @@ class UserProfileEditView(LoginRequiredMixin, TemplateView):
         usuario = request.user
 
         if 'submit_perfil' in request.POST:
-            profile_form = UserProfileUpdateForm (request.POST, instance=usuario)
+            profile_form = UserProfileUpdateForm(request.POST, request.FILES, instance=request.user)
             if profile_form.is_valid():
                 profile_form.save()
                 return redirect('accounts:self_user_profile')
@@ -70,15 +68,6 @@ class UserProfileEditView(LoginRequiredMixin, TemplateView):
             context['password_form'] = password_form
             return self.render_to_response(context)
         
-        elif 'submit_foto' in request.POST:
-            foto_form = FotoPerfilForm(request.POST, request.FILES, instance=usuario)
-            if foto_form.is_valid():
-                foto_form.save()
-                return redirect('accounts:self_user_profile')
-
-            context = self.get_context_data()
-            context['foto_form'] = foto_form
-            return self.render_to_response(context)
         
         
 
