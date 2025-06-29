@@ -1,0 +1,336 @@
+/* ==============================
+   GERAL
+============================== */
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f9f9f9;
+}
+
+main {
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem;
+}
+
+/* FUNDO AMARELO INDEPENDENTE */
+.banner-superior {
+  background: #FDFCF6;
+  height: 200px;
+  width: 100vw;
+  min-width: 100vw;
+  max-width: 100vw;
+  position: relative; /* NÃO use absolute/fixed */
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  z-index: 0;
+}
+
+.main-content {
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.perfil-professor {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  margin-top: 75px;
+}
+
+.perfil-card {
+  background: white;
+  width: 100%;
+  max-width: 1000px;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+
+.info-professor {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.foto-professor {
+  width: 120px;
+  height: 120px;
+  border-radius: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+.texto-professor h1 {
+  font-size: 1.8rem;
+  margin: 0;
+  color: #222;
+  font-weight: 600;
+}
+
+.texto-professor p {
+  font-size: 1rem;
+  color: #666;
+  margin-top: 5px;
+  font-weight: 400;
+}
+
+/* ==============================
+   LINHA DE ALUNOS
+============================== */
+.texto-professor .alunos-qtd {
+  margin-top: 20px;
+  font-size: 0.95rem;
+  color: #777;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.redes-sociais {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.redes-sociais .icon {
+  width: 40px;
+  height: 40px;
+  background: #F5F7FA;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+.redes-sociais .icon:hover {
+  background: #ccc;
+}
+
+/* ==============================
+   LAYOUT INFERIOR (SOBRE + AGENDA)
+============================== */
+.conteudo-inferior {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+/* ==============================
+   SOBRE MIM
+============================== */
+.sobre-mim {
+  flex: 1;
+  min-width: 280px;
+  max-width: 350px;
+  background: white;
+  padding: 1.5rem;
+  border: 1px solid #ddd; /* borda clara */
+}
+
+
+.sobre-mim h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: #333;
+  font-weight: 600; /* Inter SemiBold */
+  font-family: 'Inter', sans-serif;
+}
+
+.sobre-mim p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  font-weight: 400; /* Inter Regular */
+  font-family: 'Inter', sans-serif;
+  margin-top: 10px;
+}
+
+
+/* ==============================
+   AGENDA DO PROFESSOR
+============================== */
+.agenda-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  flex: 2;
+  min-width: 400px;
+}
+
+.agenda-container h2 {
+  margin-bottom: 0.5rem;
+}
+
+.agenda-container .preco {
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* ==============================
+   LEGENDA
+============================== */
+.legenda {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1.5rem;
+  font-size: 14px;
+}
+
+.legenda .box {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-right: 6px;
+  border-radius: 4px;
+}
+
+.box.vermelho { background: #f8c1c1; }
+.box.verde { background: #c3f8c3; }
+.box.verde-escuro { background: #2e7d32; }
+
+/* ==============================
+   GRADE DE HORÁRIOS
+============================== */
+.grade-agenda {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.grade-agenda .header,
+.grade-agenda .flex {
+  min-width: 900px; /* ajuste conforme o número de dias */
+}
+
+.dia {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.horario-vazio {
+  background: transparent;
+}
+
+#grade-corpo {
+  display: grid;
+  grid-template-columns: 100px repeat(5, 1fr);
+  gap: 4px;
+}
+
+.horario-label {
+  text-align: right;
+  padding-right: 10px;
+  font-size: 13px;
+  line-height: 2.2rem;
+  color: #666;
+}
+
+.celula {
+  height: 2rem;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 2rem;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.celula.vermelho {
+  background: #f8c1c1;
+  color: #900;
+  cursor: not-allowed;
+}
+
+.celula.verde {
+  background: #c3f8c3;
+  color: #1a431a;
+}
+
+.celula.verde:hover {
+  filter: brightness(0.95);
+}
+
+.celula.verde-escuro {
+  background: #2e7d32;
+  color: white;
+}
+
+/* ==============================
+   BOTÃO CONFIRMAR
+============================== */
+.btn-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-wrapper button {
+  padding: 25px 20px;
+  background-color: white;
+  color: rgb(0, 0, 0);
+  border: 1px solid #ddd;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.btn-wrapper button:hover {
+  background-color: #444;
+}
+
+/* TÍTULO "AGENDA" */
+.agenda-titulo {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #222;
+  margin-left: 42px;
+}
+
+/* LINHA LARANJA ABAIXO DO TÍTULO */
+.linha-laranja {
+  width: 150px;
+  height: 2px;
+  background-color: #f28c38;
+  margin-bottom: 1.5rem;
+}
+
+/* SUBTÍTULO "Agenda do Professor" */
+.agenda-subtitulo {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #1D2026;
+}
+
+/* TEXTO "Valor/hora:" */
+.preco {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  margin-bottom: 0.3rem;
+}
+
+/* TEXTO "Selecione os horários..." */
+.instrucao {
+  font-family: 'Inter', sans-serif;
+  font-weight: 00;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}

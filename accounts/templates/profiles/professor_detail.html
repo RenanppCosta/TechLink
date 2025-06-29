@@ -1,45 +1,169 @@
 {% extends "base.html" %}
-
 {% load static %}
+{% load dict_extras %}
 
 {% block titles %}
     Techlink | Perfil de {{ perfil_professor.usuario.nome }} {{ perfil_professor.usuario.sobrenome }}
 {% endblock %}
 
-
 {% block styles %}
+<link rel="stylesheet" href="{% static 'css/teach_profile.css' %}">
+<style>
 
+</style>
 {% endblock %}
 
 {% block content %}
-<main class="w-full flex flex-col items-center py-8 px-6">
-    <div class="w-full max-w-3xl bg-white border border-gray-300 p-10 mb-10 rounded-lg">
-        <div class="flex items-center gap-6 mb-6">
-            <img src="{% if perfil_professor.usuario.foto_perfil %}{{ perfil_professor.usuario.foto_perfil.url }}{% else %}{% static 'img/default-avatar.jpg' %}{% endif %}" 
-                 alt="Foto de Perfil" class="h-28 w-28 rounded-full object-cover">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900">{{ perfil_professor.usuario.nome }} {{ perfil_professor.usuario.sobrenome }}</h2>
-                <p class="text-gray-600">{{ perfil_professor.formacao }}</p>
-            </div>
+<div style="height: 300px;"></div> <!-- Espaço para o header -->
+<div class="banner-superior"></div>
+
+<main class="main-content">
+  <!-- Card do professor centralizado e sobreposto à faixa -->
+  <section class="perfil-professor">
+    <div class="perfil-card">
+      <div class="info-professor">
+        {% if perfil_professor.usuario.foto_perfil %}
+          <img src="{{ perfil_professor.usuario.foto_perfil.url }}" alt="Foto do professor" class="foto-professor" />
+        {% else %}
+          <img src="{% static 'img/instrutor.png' %}" alt="Foto do professor" class="foto-professor" />
+        {% endif %}
+        <div class="texto-professor">
+          <h1 id="nomeProfessor">{{ perfil_professor.usuario.nome }} {{ perfil_professor.usuario.sobrenome }}</h1>
+          <p id="tituloProfessor">Professor de {{ perfil_professor.temas.first.nome|default:"História" }}</p>
+          <p class="alunos-qtd"><i class="fa-solid fa-users"></i> 620 alunos</p>
         </div>
-        <div class="mb-4">
-            <h3 class="font-semibold text-gray-900">Apresentação</h3>
-            <p class="text-gray-700">{{ perfil_professor.apresentacao }}</p>
-        </div>
-        <div class="mb-4">
-            <h3 class="font-semibold text-gray-900">Valor Hora</h3>
-            <p class="text-gray-700">R$ {{ perfil_professor.valor_hora }}</p>
-        </div>
-        <div class="mb-4">
-            <h3 class="font-semibold text-gray-900">Temas</h3>
-            <ul class="flex flex-wrap gap-2">
-                {% for tema in perfil_professor.temas.all %}
-                    <li class="bg-gray-200 px-3 py-1 rounded-full text-gray-800 text-sm">{{ tema.nome }}</li>
-                {% empty %}
-                    <li class="text-gray-500">Nenhum tema cadastrado.</li>
-                {% endfor %}
-            </ul>
-        </div>
+      </div>
+      <div class="redes-sociais">
+        <a href="#" target="_blank" class="icon facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" target="_blank" class="icon twitter"><i class="fa-brands fa-twitter"></i></a>
+        <a href="#" target="_blank" class="icon instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" target="_blank" class="icon youtube"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" target="_blank" class="icon whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
     </div>
+  </section>
+
+  <!-- SOBRE MIM + AGENDA lado a lado -->
+  <div class="conteudo-inferior">
+    <aside class="sobre-mim">
+      <h3>Sobre mim</h3>
+      <p id="textoSobre">
+        {{ perfil_professor.apresentacao }}
+      </p>
+    </aside>
+
+    <section class="agenda-container">
+        <h3 class="agenda-titulo">Agenda</h3>
+        <div class="linha-laranja"></div>
+        <h3 class="agenda-subtitulo">Agenda de {{ perfil_professor.usuario.nome }}</h3>
+        <p class="preco">Valor/hora: <span id="valorHora">R$ {{ perfil_professor.valor_hora }}</span></p>
+        <p class="instrucao">Selecione os horários que você deseja agendar:</p>
+
+        <div class="legenda">
+            <span><span class="box vermelho"></span> Já agendado</span>
+            <span><span class="box verde"></span> Disponível</span>
+            <span><span class="box verde-escuro"></span> Selecionado</span>
+        </div>
+
+        <div class="grade-agenda">
+        <div class="header flex">
+            <div class="horario-vazio w-20"></div>
+            {% for dia in dias %}
+            <div class="dia flex-1 text-center font-semibold">{{ dia }}</div>
+            {% endfor %}
+        </div>
+        <div>
+            {% for hora in horarios %}
+            <div class="flex items-center">
+                <div class="horario-label w-20 text-right pr-2">{{ hora }}</div>
+                {% for dia in dias %}
+                {% with status=agenda|dict_get:dia|dict_get:hora %}
+                    <div class="celula flex-1 text-center py-2
+                        {% if status == 'agendado' %} bg-red-200
+                        {% elif status == 'disponivel' %} bg-green-200 cursor-pointer hover:bg-green-300
+                        {% else %} bg-gray-100
+                        {% endif %}">
+                        {{ status }}
+                    </div>
+                {% endwith %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        </div>
+
+        <div class="btn-wrapper">
+            <button id="btn-confirmar">Confirmar agendamento</button>
+        </div>
+    </section>
+  </div>
 </main>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const gradeCorpo = document.getElementById("grade-corpo");
+    const btnConfirmar = document.getElementById("btn-confirmar");
+
+    const dias = ["Dom 23", "Seg 24", "Ter 25", "Qua 26", "Qui 27"];
+    const horarios = Array.from({ length: 17 }, (_, i) => `${6 + i}:00`);
+
+    const statusHorarios = {
+      "Dom 23-7:00": "disponivel",
+      "Dom 23-8:00": "agendado",
+      "Seg 24-9:00": "disponivel",
+      "Ter 25-10:00": "agendado",
+      "Qua 26-11:00": "disponivel",
+      "Qua 26-14:00": "disponivel",
+      "Qui 27-15:00": "disponivel",
+    };
+
+    const selecionados = [];
+
+    horarios.forEach(hora => {
+      const label = document.createElement("div");
+      label.classList.add("horario-label");
+      label.textContent = hora;
+      gradeCorpo.appendChild(label);
+
+      dias.forEach(dia => {
+        const key = `${dia}-${hora}`;
+        const div = document.createElement("div");
+        div.classList.add("celula");
+
+        const status = statusHorarios[key];
+
+        if (status === "agendado") {
+          div.classList.add("vermelho");
+        } else if (status === "disponivel") {
+          div.classList.add("verde");
+          div.addEventListener("click", () => {
+            const idx = selecionados.indexOf(key);
+            if (idx > -1) {
+              selecionados.splice(idx, 1);
+              div.classList.remove("verde-escuro");
+              div.classList.add("verde");
+            } else {
+              selecionados.push(key);
+              div.classList.remove("verde");
+              div.classList.add("verde-escuro");
+            }
+          });
+        } else {
+          div.classList.add("branco");
+        }
+
+        gradeCorpo.appendChild(div);
+      });
+    });
+
+    btnConfirmar.addEventListener("click", () => {
+      if (selecionados.length > 0) {
+        console.log("Horários selecionados:", selecionados);
+        window.location.href = "/metodo-de-pagamento.html";
+      } else {
+        alert("Selecione ao menos um horário.");
+      }
+    });
+  });
+</script>
 {% endblock %}
