@@ -5,197 +5,176 @@
     Techlink | Criar Conta
 {% endblock %}
 
-
 {% block styles %}
     <style>
-        /* Pequeno ajuste para a transição suave do seletor de tipo de usuário */
         .seletor-opcao {
             transition: all 0.2s ease-in-out;
         }
     </style>
 {% endblock %}
 
-
-
 {% block content %}
 <main class="w-full flex flex-col items-center py-8 px-6">
-        <div class="w-full max-w-3xl">
-            <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-8">Crie sua conta</h1>
-            
-            <div id="userTypeSelector" class="flex max-w-sm mx-auto mb-8 bg-gray-200 p-1 rounded-lg gap-1">
-    
-                <button type="button" 
-                        data-value="aluno" 
-                        class="user-type-btn w-1/2 text-center py-2 rounded-md cursor-pointer font-semibold transition-colors duration-200">
-                    Aluno
-                </button>
-                
-                <button type="button" 
-                        data-value="professor" 
-                        class="user-type-btn w-1/2 text-center py-2 rounded-md cursor-pointer font-semibold transition-colors duration-200">
-                    Professor
-                </button>
+    <div class="w-full max-w-3xl">
+        <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-8">Crie sua conta</h1>
+        
+        <div id="userTypeSelector" class="flex max-w-sm mx-auto mb-8 bg-gray-200 p-1 rounded-lg gap-1">
+            <button type="button" 
+                    data-value="aluno" 
+                    class="user-type-btn w-1/2 text-center py-2 rounded-md cursor-pointer font-semibold transition-colors duration-200">
+                Aluno
+            </button>
+            <button type="button" 
+                    data-value="professor" 
+                    class="user-type-btn w-1/2 text-center py-2 rounded-md cursor-pointer font-semibold transition-colors duration-200">
+                Professor
+            </button>
+        </div>
+        
+        <form method="post" action="" id="register-form" class="bg-white flex flex-col gap-6">
+            {% csrf_token %}
+            <input type="hidden" name="tipo" id="tipo-input" value="aluno">
 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex flex-col">
+                    <label for="{{ profile_form.nome.id_for_label }}" class="mb-1 text-gray-900">Nome</label>
+                    {{ profile_form.nome }}
+                    {% if profile_form.nome.errors %}
+                        <p class="text-red-600 text-sm">{{ profile_form.nome.errors }}</p>
+                    {% endif %}
+                </div>
+                <div class="flex flex-col">
+                    <label for="{{ profile_form.sobrenome.id_for_label }}" class="mb-1 text-gray-900">Sobrenome</label>
+                    {{ profile_form.sobrenome }}
+                    {% if profile_form.sobrenome.errors %}
+                        <p class="text-red-600 text-sm">{{ profile_form.sobrenome.errors }}</p>
+                    {% endif %}
+                </div>
             </div>
-            
-            <form method="post" action="" id="student-form" class="bg-white flex flex-col gap-6">
-                {% csrf_token %}
-
-                <input type="hidden" name="tipo" id="tipo-input-aluno" value="aluno">
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.nome.id_for_label }}" class="mb-1 text-gray-900">Nome</label>
-                        {{ profile_form.nome }}
-                        {% if profile_form.nome.errors %}
-                            <p class="text-red-600 text-sm">{{ profile_form.nome.errors }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.sobrenome.id_for_label }}" class="mb-1 text-gray-900 invisible">Sobrenome</label>
-                        {{ profile_form.sobrenome}}
-                        {% if profile_form.sobrenome.errors %}
-                            <p class="text-red-600 text-sm">{{ profile_form.sobrenome.errors }}</p>
-                        {% endif %}
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex flex-col">
+                    <label for="{{ profile_form.num_celular.id_for_label }}" class="mb-1 text-gray-900">Telefone</label>
+                    {{ profile_form.num_celular }}
+                    {% if profile_form.num_celular.errors %}
+                        <p class="text-red-600 text-sm">{{ profile_form.num_celular.errors }}</p>
+                    {% endif %}
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.num_celular.id_for_label }}" class="mb-1 text-gray-900">Telefone</label>
-                        {{ profile_form.num_celular }}
-                        {% if profile_form.num_celular.errors %}
-                            <p class="text-red-600 text-sm">{{ profile_form.num_celular.errors }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.email.id_for_label }}" class="mb-1 text-gray-900">Email</label>
-                        {{ profile_form.email }}
-                        {% if profile_form.email.errors %}
-                            <p class="text-red-600 text-sm">{{ profile_form.email.errors }}</p>
-                        {% endif %}
-                    </div>
+                <div class="flex flex-col">
+                    <label for="{{ profile_form.email.id_for_label }}" class="mb-1 text-gray-900">Email</label>
+                    {{ profile_form.email }}
+                    {% if profile_form.email.errors %}
+                        <p class="text-red-600 text-sm">{{ profile_form.email.errors }}</p>
+                    {% endif %}
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.password1.id_for_label }}" class="mb-1 text-gray-900">Senha</label>
-                        {{ profile_form.password1 }}
-                        {% if profile_form.password1.errors %}
-                            <p class="text-red-600 text-sm">{{ profile_form.password1.errors }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.password2.id_for_label }}" class="mb-1 text-gray-900">Confirmação de senha</label>
-                        {{ profile_form.password2 }}
-                        {% if profile_form.password2.errors %}
-                            <p class="text-red-600 text-sm">{{ profile_form.password2.errors }}</p>
-                        {% endif %}
-                    </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex flex-col">
+                    <label for="{{ profile_form.password1.id_for_label }}" class="mb-1 text-gray-900">Senha</label>
+                    {{ profile_form.password1 }}
+                    {% if profile_form.password1.errors %}
+                        <p class="text-red-600 text-sm">{{ profile_form.password1.errors }}</p>
+                    {% endif %}
                 </div>
-                <button type="submit" class="w-52 mx-auto py-3 mt-4 bg-red-900 text-white font-semibold flex gap-3 items-center justify-center cursor-pointer hover:bg-red-800 transition duration-300">
-                    <span>Criar Conta</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                </button>
-            </form>
-
-            <form method="post" action="" id="teacher-form" class="bg-white flex-col gap-6 hidden">
-                {% csrf_token %}
-
-                <input type="hidden" name="tipo" id="tipo-input-professor" value="professor">
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.nome.id_for_label }}" class="mb-1 text-gray-900">Nome</label>
-                        {{ profile_form.nome }}
-                        {% if professor_form.nome.errors %}
-                            <p class="text-red-600 text-sm">{{ professor_form.nome.errors }}</p>
-                        {% endif %}
-                
-                    </div>
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.sobrenome.id_for_label }}" class="mb-1 text-gray-900 invisible">Sobrenome</label>
-                        {{ profile_form.sobrenome}}
-                        {% if professor_form.sobrenome.errors %}
-                            <p class="text-red-600 text-sm">{{ professor_form.sobrenome.errors }}</p>
-                        {% endif %}
-                    </div>
+                <div class="flex flex-col">
+                    <label for="{{ profile_form.password2.id_for_label }}" class="mb-1 text-gray-900">Confirmação de senha</label>
+                    {{ profile_form.password2 }}
+                    {% if profile_form.password2.errors %}
+                        <p class="text-red-600 text-sm">{{ profile_form.password2.errors }}</p>
+                    {% endif %}
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.num_celular.id_for_label }}" class="mb-1 text-gray-900">Telefone</label>
-                        {{ profile_form.num_celular }}
-                        {% if professor_form.num_celular.errors %}
-                            <p class="text-red-600 text-sm">{{ professor_form.num_celular.errors }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.email.id_for_label }}" class="mb-1 text-gray-900">Email</label>
-                        {{ profile_form.email }}
-                        {% if professor_form.email.errors %}
-                            <p class="text-red-600 text-sm">{{ professor_form.email.errors }}</p>
-                        {% endif %}
-                    </div>
-                </div>
+            </div>
 
+            <div id="professor-fields" class="hidden">
                 <div class="flex flex-col mb-6">
-                    <label for="{{ professor_form.formacao.id_for_label }}" class="mb-1 text-gray-900">Apresentação</label>
+                    <label for="{{ professor_form.apresentacao.id_for_label }}" class="mb-1 text-gray-900">Apresentação</label>
                     {{ professor_form.apresentacao }}
                     {% if professor_form.apresentacao.errors %}
                         <p class="text-red-600 text-sm">{{ professor_form.apresentacao.errors }}</p>
                     {% endif %}
                 </div>
-            
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.password1.id_for_label }}" class="mb-1 text-gray-900">Senha</label>
-                        {{ profile_form.password1 }}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Temas</label>
+                    <div id="temas-container">
+                        <div class="tema-input flex items-center gap-2 mb-2">
+                            <input type="text" id="novo-tema-input" class="tema-field border px-2 py-1 rounded" placeholder="Digite um tema">
+                            <button type="button" id="add-tema-btn" class="bg-green-500 text-white px-2 py-1 rounded">+</button>
+                        </div>
                     </div>
-                    <div class="flex flex-col">
-                        <label for="{{ profile_form.password2.id_for_label }}" class="mb-1 text-gray-900">Confirmação de senha</label>
-                        {{ profile_form.password2 }}
-                    </div>
+                    {% if temas_error %}
+                        <p class="text-red-600 text-sm">{{ temas_error }}</p>
+                    {% endif %}
+
+                    <ul id="temas-list" class="flex flex-wrap gap-2">
+                        
+                    </ul>
                 </div>
-                <button type="submit" class="w-52 mx-auto py-3 mt-4 bg-red-900 text-white font-semibold flex gap-3 items-center justify-center cursor-pointer hover:bg-red-800 transition duration-300">
-                    <span>Criar Conta</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </div>
+
+            <button type="submit" class="w-52 mx-auto py-3 mt-4 bg-red-900 text-white font-semibold flex gap-3 items-center justify-center cursor-pointer hover:bg-red-800 transition duration-300">
+                <span>Criar Conta</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </button>
+        </form>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const typeButtons = document.querySelectorAll('.user-type-btn');
+    const tipoInput = document.getElementById('tipo-input');
+    const professorFields = document.getElementById('professor-fields');
+
+    function setActiveUserType(selectedValue) {
+        typeButtons.forEach(button => {
+            button.classList.remove('bg-red-900', 'text-white');
+            if (button.dataset.value === selectedValue) {
+                button.classList.add('bg-red-900', 'text-white');
+            }
+        });
+        tipoInput.value = selectedValue;
+        if (selectedValue === 'professor') {
+            professorFields.classList.remove('hidden');
+        } else {
+            professorFields.classList.add('hidden');
+        }
+    }
+
+    setActiveUserType('aluno');
+
+    typeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            setActiveUserType(this.dataset.value);
+        });
+    });
+
+    const addTemaBtn = document.getElementById('add-tema-btn');
+    const novoTemaInput = document.getElementById('novo-tema-input');
+    const temasList = document.getElementById('temas-list');
+
+    addTemaBtn.addEventListener('click', function() {
+        const tema = novoTemaInput.value.trim();
+        if (tema) {
+            // Verifica se já existe um tema igual (case-insensitive)
+            const temasExistentes = Array.from(temasList.querySelectorAll('input[name="temas[]"]'))
+                .map(input => input.value.toLowerCase());
+            if (temasExistentes.includes(tema.toLowerCase())) {
+                novoTemaInput.value = '';
+                novoTemaInput.focus();
+                return; // Não adiciona duplicado
+            }
+            const li = document.createElement('li');
+            li.className = 'bg-red-200 px-3 py-1 rounded-full text-gray-800 text-sm flex items-center gap-2';
+            li.innerHTML = `
+                ${tema}
+                <button type="button" class="ml-2 text-red-600 hover:text-red-800 remove-tema-btn" title="Remover tema">
+                <i class="fa-solid fa-xmark"></i>
                 </button>
-            </form>
-        </div>
-    </main>
-
-    <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const studentForm = document.getElementById('student-form');
-                const teacherForm = document.getElementById('teacher-form');
-                const typeButtons = document.querySelectorAll('.user-type-btn');
-
-        
-                function setActiveUserType(selectedValue) {
-                    
-                    typeButtons.forEach(button => {
-                        button.classList.remove('bg-red-900', 'text-white');
-                    
-                        if (button.dataset.value === selectedValue) {
-                            button.classList.add('bg-red-900', 'text-white');
-                        }
-                    });
-
-                
-                    if (selectedValue === 'aluno') {
-                        studentForm.classList.remove('hidden');
-                        teacherForm.classList.add('hidden');
-                    } else {
-                        studentForm.classList.add('hidden');
-                        teacherForm.classList.remove('hidden');
-                    }
-                }
-
-                setActiveUserType('aluno');
-
-                typeButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        setActiveUserType(this.dataset.value);
-                    });
-                });
-            });
-    </script>
+                <input type="hidden" name="temas[]" value="${tema}">
+            `;
+            temasList.appendChild(li);
+            novoTemaInput.value = '';
+        }
+    });
+    });
+</script>
 {% endblock %}
