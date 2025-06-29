@@ -5,11 +5,18 @@
     Techlink | Perfil
 {% endblock %}
 
-
 {% block styles %}
-
+<style>
+.card-hover {
+    transition: box-shadow 0.2s;
+    cursor: pointer;
+}
+.card-hover:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    background: #f9fafb;
+}
+</style>
 {% endblock %}
-
 
 {% block content %}
 
@@ -21,19 +28,26 @@
 </form>
 
 {% if professores %}
-    <ul class="list-group mt-3">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
         {% for prof in professores %}
-            <li class="list-group-item">
-                <strong>{{ prof.usuario.nome }} {{ prof.usuario.sobrenome }}</strong><br>
-                {% if usuario.foto_perfil %}
-                    <img src="{{ usuario.foto_perfil.url }}" alt="Imagem perfil" class="h-[100px] w-[100px] rounded-full object-cover">
-                {% endif %}
-                Formação: {{ prof.formacao }}<br>
-                Áreas de conhecimento: {{ prof.areas_conhecimento }}<br>
-                Valor/hora: R$ {{ prof.valor_hora }}
-            </li>
+            <a href="{% url 'accounts:professor_detail' prof.pk %}" style="text-decoration: none; color: inherit;">
+                <div class="card-hover border rounded-lg p-4 mb-2 bg-white">
+                    <strong>{{ prof.usuario.nome }} {{ prof.usuario.sobrenome }}</strong><br>
+                    {% if prof.usuario.foto_perfil %}
+                        <img src="{{ prof.usuario.foto_perfil.url }}" alt="Imagem perfil" class="h-[100px] w-[100px] rounded-full object-cover my-2">
+                    {% endif %}
+                    Formação: {{ prof.formacao }}<br>
+                    Temas:
+                    {% for tema in prof.temas.all %}
+                        {{ tema.nome }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        Nenhum tema cadastrado
+                    {% endfor %}<br>
+                    Valor/hora: R$ {{ prof.valor_hora }}
+                </div>
+            </a>
         {% endfor %}
-    </ul>
+    </div>
 {% else %}
     <p class="mt-3">Nenhum professor encontrado.</p>
 {% endif %}

@@ -11,5 +11,5 @@ class ProfessorSearchView(ListView):
         query = self.request.GET.get('q', '')
         return PerfilProfessor.objects.filter(
             Q(usuario__nome__icontains=query) |
-            Q(areas_conhecimento__icontains=query)
-        )
+            Q(temas__nome__icontains=query)
+        ).distinct()
