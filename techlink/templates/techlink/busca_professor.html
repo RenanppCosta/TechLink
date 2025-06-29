@@ -20,13 +20,63 @@
 
 {% block content %}
 
-<h2>Buscar Professores</h2>
-
-<form method="get" action="{% url 'techlink:buscar' %}">
-    <input type="text" name="q" placeholder="Nome ou área de conhecimento" value="{{ request.GET.q }}" class="form-control mb-3">
-    <button type="submit" class="btn btn-primary">Buscar</button>
-</form>
-
+<!-- Filtro visual e formulário de ordenação -->
+<div class="inline-flex flex-col justify-center items-center mb-8 w-full">
+  <div class="w-[1320px] inline-flex justify-between items-center">
+    <form method="get" action="" class="flex w-full justify-between items-center gap-6">
+      <div class="flex justify-start items-start gap-6">
+        <div data-color="Gray" data-filter="True" data-icon="False" data-positions="Tertiary" data-size="Medium" data-status="Normal" class="px-6 bg-white outline outline-1 outline-offset-[-1px] outline-[#ffddd1] flex justify-center items-center gap-6">
+          <div class="flex justify-center items-center gap-3">
+            <div class="w-6 h-6 relative">
+              <!-- ... ícone ... -->
+            </div>
+            <div class="justify-start text-[#1d1f26] text-base font-semibold font-['Inter'] capitalize leading-[48px]">Filtro</div>
+          </div>
+          <div class="px-1.5 py-1 bg-[#ffeee8] inline-flex flex-col justify-center items-center gap-2.5">
+            <div class="text-center justify-start text-[#ff6636] text-xs font-semibold font-['Inter'] leading-none">3</div>
+          </div>
+        </div>
+        <div class="w-[457px] h-12 relative bg-white outline outline-1 outline-offset-[-1px] outline-[#e8eaef] overflow-hidden">
+          <div class="left-[18px] top-[12px] absolute inline-flex justify-start items-center gap-3">
+            <div class="w-6 h-6 relative">
+              <!-- ... ícone ... -->
+            </div>
+            <div class="justify-start text-[#1d1f26] text-base font-normal font-['Inter'] leading-normal">
+              <input
+                type="text"
+                name="q"
+                placeholder="Nome ou área de conhecimento"
+                value="{{ request.GET.q }}"
+                class="border rounded px-2 py-1"
+                style="min-width: 200px;"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-center items-center gap-6">
+        <div class="justify-start text-[#4d5565] text-sm font-normal font-['Inter'] leading-snug">Filtrar por:</div>
+        <select name="ordenar" class="border rounded px-2 py-1"
+                onchange="this.form.submit()">
+          <option value="">Mais Populares</option>
+          <option value="asc" {% if request.GET.ordenar == "asc" %}selected{% endif %}>Nome (A-Z)</option>
+          <option value="desc" {% if request.GET.ordenar == "desc" %}selected{% endif %}>Nome (Z-A)</option>
+        </select>
+      </div>
+    </form>
+  </div>
+  <div class="w-[1320px] pt-6 pb-4 bg-white shadow-[inset_0px_-1px_0px_0px_rgba(233,234,240,1.00)] inline-flex justify-between items-center">
+    <div class="justify-start">
+      <span class="text-[#1d1f26] text-sm font-medium font-['Inter'] leading-tight">
+        {{ professores|length }}
+      </span>
+      <span class="text-[#4d5565] text-sm font-normal font-['Inter'] leading-snug">
+        resultados{% if request.GET.q %} para “{{ request.GET.q }}”{% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+<!-- Resultado -->
 {% if professores %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
         {% for prof in professores %}
