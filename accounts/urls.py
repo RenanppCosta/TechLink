@@ -4,7 +4,8 @@ from accounts.views import(
     LoginView,
     RegisterView,
     UserProfileEditView,
-    ProfessorCreateProfileView
+    ProfessorDetailView,
+    DeletaTemaView
 )
 from accounts.models import CustomUser
 
@@ -15,6 +16,6 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='accounts:login'), name='logout'),
     path('registrar/', RegisterView.as_view(), name='register'),
     path('usuario/me', UserProfileEditView.as_view(), name='self_user_profile'),
-    path('usuario/<int:pk>', UserProfileEditView.as_view(), name='other_ser_profile'),
-    path('completar-perfil-professor/', ProfessorCreateProfileView.as_view(), name='completar_perfil_professor'),
+    path('professor/<int:pk>', ProfessorDetailView.as_view(), name='other_ser_profile'),
+    path('tema/delete/<int:tema_id>/', DeletaTemaView.as_view(), name='delete_tema'),
 ]

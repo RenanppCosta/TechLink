@@ -18,10 +18,6 @@ class LoginView(FormView):
         if user is not None:
             login(self.request, user)
 
-            if user.tipo == 'professor':
-                if not PerfilProfessor.objects.filter(usuario=user).exists():
-                    return redirect('accounts:completar_perfil_professor')
-
             return redirect(self.success_url)
 
         form.add_error(None, "Email ou senha inválidos.")

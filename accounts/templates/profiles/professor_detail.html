@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block titles %}
+    Techlink | Perfil de {{ perfil_professor.usuario.nome }} {{ perfil_professor.usuario.sobrenome }}
+{% endblock %}
+
+
+{% block styles %}
+
+{% endblock %}
+
+{% block content %}
+<main class="w-full flex flex-col items-center py-8 px-6">
+    <div class="w-full max-w-3xl bg-white border border-gray-300 p-10 mb-10 rounded-lg">
+        <div class="flex items-center gap-6 mb-6">
+            <img src="{% if perfil_professor.usuario.foto_perfil %}{{ perfil_professor.usuario.foto_perfil.url }}{% else %}{% static 'img/default-avatar.jpg' %}{% endif %}" 
+                 alt="Foto de Perfil" class="h-28 w-28 rounded-full object-cover">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">{{ perfil_professor.usuario.nome }} {{ perfil_professor.usuario.sobrenome }}</h2>
+                <p class="text-gray-600">{{ perfil_professor.formacao }}</p>
+            </div>
+        </div>
+        <div class="mb-4">
+            <h3 class="font-semibold text-gray-900">Apresentação</h3>
+            <p class="text-gray-700">{{ perfil_professor.apresentacao }}</p>
+        </div>
+        <div class="mb-4">
+            <h3 class="font-semibold text-gray-900">Valor Hora</h3>
+            <p class="text-gray-700">R$ {{ perfil_professor.valor_hora }}</p>
+        </div>
+        <div class="mb-4">
+            <h3 class="font-semibold text-gray-900">Temas</h3>
+            <ul class="flex flex-wrap gap-2">
+                {% for tema in perfil_professor.temas.all %}
+                    <li class="bg-gray-200 px-3 py-1 rounded-full text-gray-800 text-sm">{{ tema.nome }}</li>
+                {% empty %}
+                    <li class="text-gray-500">Nenhum tema cadastrado.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -24,6 +24,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     TIPO_USUARIO = (
         ('aluno', 'Aluno'),
         ('professor', 'Professor'),
+        ('admin', 'Administrador'),
     )
 
     foto_perfil = models.ImageField(upload_to='fotos_perfil/', blank=True, null=True)

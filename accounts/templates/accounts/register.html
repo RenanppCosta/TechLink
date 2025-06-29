@@ -38,36 +38,57 @@
 
             </div>
             
-            <form id="student-form" class="bg-white flex flex-col gap-6">
+            <form method="post" action="" id="student-form" class="bg-white flex flex-col gap-6">
                 {% csrf_token %}
+
+                <input type="hidden" name="tipo" id="tipo-input-aluno" value="aluno">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="flex flex-col">
-                        <label for="{{ form.nome.id_for_label }}" class="mb-1 text-gray-900">Nome</label>
-                        {{ form.nome }}
+                        <label for="{{ profile_form.nome.id_for_label }}" class="mb-1 text-gray-900">Nome</label>
+                        {{ profile_form.nome }}
+                        {% if profile_form.nome.errors %}
+                            <p class="text-red-600 text-sm">{{ profile_form.nome.errors }}</p>
+                        {% endif %}
                     </div>
                     <div class="flex flex-col">
-                        <label for="{{ form.sobrenome.id_for_label }}" class="mb-1 text-gray-900 invisible">Sobrenome</label>
-                        {{form.sobrenome}}
+                        <label for="{{ profile_form.sobrenome.id_for_label }}" class="mb-1 text-gray-900 invisible">Sobrenome</label>
+                        {{ profile_form.sobrenome}}
+                        {% if profile_form.sobrenome.errors %}
+                            <p class="text-red-600 text-sm">{{ profile_form.sobrenome.errors }}</p>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="flex flex-col">
-                        <label for="{{ form.num_celular.id_for_label }}" class="mb-1 text-gray-900">Telefone</label>
-                        {{ form.num_celular }}
+                        <label for="{{ profile_form.num_celular.id_for_label }}" class="mb-1 text-gray-900">Telefone</label>
+                        {{ profile_form.num_celular }}
+                        {% if profile_form.num_celular.errors %}
+                            <p class="text-red-600 text-sm">{{ profile_form.num_celular.errors }}</p>
+                        {% endif %}
                     </div>
                     <div class="flex flex-col">
-                        <label for="{{ form.email.id_for_label }}" class="mb-1 text-gray-900">Email</label>
-                        {{ form.email }}
+                        <label for="{{ profile_form.email.id_for_label }}" class="mb-1 text-gray-900">Email</label>
+                        {{ profile_form.email }}
+                        {% if profile_form.email.errors %}
+                            <p class="text-red-600 text-sm">{{ profile_form.email.errors }}</p>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="flex flex-col">
-                        <label for="{{ form.password1.id_for_label }}" class="mb-1 text-gray-900">Senha</label>
-                        {{ form.password1 }}
+                        <label for="{{ profile_form.password1.id_for_label }}" class="mb-1 text-gray-900">Senha</label>
+                        {{ profile_form.password1 }}
+                        {% if profile_form.password1.errors %}
+                            <p class="text-red-600 text-sm">{{ profile_form.password1.errors }}</p>
+                        {% endif %}
                     </div>
                     <div class="flex flex-col">
-                        <label for="{{ form.password2.id_for_label }}" class="mb-1 text-gray-900">Confirmação de senha</label>
-                        {{ form.password2 }}
+                        <label for="{{ profile_form.password2.id_for_label }}" class="mb-1 text-gray-900">Confirmação de senha</label>
+                        {{ profile_form.password2 }}
+                        {% if profile_form.password2.errors %}
+                            <p class="text-red-600 text-sm">{{ profile_form.password2.errors }}</p>
+                        {% endif %}
                     </div>
                 </div>
                 <button type="submit" class="w-52 mx-auto py-3 mt-4 bg-red-900 text-white font-semibold flex gap-3 items-center justify-center cursor-pointer hover:bg-red-800 transition duration-300">
@@ -76,44 +97,61 @@
                 </button>
             </form>
 
-            <form id="teacher-form" class="bg-white flex-col gap-6 hidden">
+            <form method="post" action="" id="teacher-form" class="bg-white flex-col gap-6 hidden">
                 {% csrf_token %}
+
+                <input type="hidden" name="tipo" id="tipo-input-professor" value="professor">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="flex flex-col">
-                        <label for="{{ form.nome.id_for_label }}" class="mb-1 text-gray-900">Nome</label>
-                        {{ form.nome }}
+                        <label for="{{ profile_form.nome.id_for_label }}" class="mb-1 text-gray-900">Nome</label>
+                        {{ profile_form.nome }}
+                        {% if professor_form.nome.errors %}
+                            <p class="text-red-600 text-sm">{{ professor_form.nome.errors }}</p>
+                        {% endif %}
+                
                     </div>
                     <div class="flex flex-col">
-                        <label for="{{ form.sobrenome.id_for_label }}" class="mb-1 text-gray-900 invisible">Sobrenome</label>
-                        {{form.sobrenome}}
+                        <label for="{{ profile_form.sobrenome.id_for_label }}" class="mb-1 text-gray-900 invisible">Sobrenome</label>
+                        {{ profile_form.sobrenome}}
+                        {% if professor_form.sobrenome.errors %}
+                            <p class="text-red-600 text-sm">{{ professor_form.sobrenome.errors }}</p>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="flex flex-col">
-                        <label for="{{ form.num_celular.id_for_label }}" class="mb-1 text-gray-900">Telefone</label>
-                        {{ form.num_celular }}
+                        <label for="{{ profile_form.num_celular.id_for_label }}" class="mb-1 text-gray-900">Telefone</label>
+                        {{ profile_form.num_celular }}
+                        {% if professor_form.num_celular.errors %}
+                            <p class="text-red-600 text-sm">{{ professor_form.num_celular.errors }}</p>
+                        {% endif %}
                     </div>
                     <div class="flex flex-col">
-                        <label for="{{ form.email.id_for_label }}" class="mb-1 text-gray-900">Email</label>
-                        {{ form.email }}
+                        <label for="{{ profile_form.email.id_for_label }}" class="mb-1 text-gray-900">Email</label>
+                        {{ profile_form.email }}
+                        {% if professor_form.email.errors %}
+                            <p class="text-red-600 text-sm">{{ professor_form.email.errors }}</p>
+                        {% endif %}
                     </div>
                 </div>
+
                 <div class="flex flex-col mb-6">
-                    <label for="teacher-theme" class="mb-1 text-gray-900">Tema</label>
-                    <input type="text" id="teacher-theme" placeholder="Ex: Inteligência Artificial na Educação" class="w-full p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-800">
+                    <label for="{{ professor_form.formacao.id_for_label }}" class="mb-1 text-gray-900">Apresentação</label>
+                    {{ professor_form.apresentacao }}
+                    {% if professor_form.apresentacao.errors %}
+                        <p class="text-red-600 text-sm">{{ professor_form.apresentacao.errors }}</p>
+                    {% endif %}
                 </div>
-                <div class="flex flex-col mb-6">
-                    <label for="teacher-presentation" class="mb-1 text-gray-900">Apresentação</label>
-                    <textarea id="teacher-presentation" rows="4" placeholder="Fale um pouco sobre você e sua área de atuação..." class="w-full p-3 border border-gray-300 resize-y focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-800"></textarea>
-                </div>
+            
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="flex flex-col">
-                        <label for="{{ form.password1.id_for_label }}" class="mb-1 text-gray-900">Senha</label>
-                        {{ form.password1 }}
+                        <label for="{{ profile_form.password1.id_for_label }}" class="mb-1 text-gray-900">Senha</label>
+                        {{ profile_form.password1 }}
                     </div>
                     <div class="flex flex-col">
-                        <label for="{{ form.password2.id_for_label }}" class="mb-1 text-gray-900">Confirmação de senha</label>
-                        {{ form.password2 }}
+                        <label for="{{ profile_form.password2.id_for_label }}" class="mb-1 text-gray-900">Confirmação de senha</label>
+                        {{ profile_form.password2 }}
                     </div>
                 </div>
                 <button type="submit" class="w-52 mx-auto py-3 mt-4 bg-red-900 text-white font-semibold flex gap-3 items-center justify-center cursor-pointer hover:bg-red-800 transition duration-300">

@@ -51,8 +51,16 @@
 
         </div>
         <div class="flex gap-3 items-center">
-            <button class="bg-red-100 text-red-900 px-5 py-3 font-semibold text-sm cursor-pointer hover:bg-red-300 transition duration-300">Criar Conta</button>
-            <button class="bg-red-900 text-white px-5 py-3 font-semibold text-sm cursor-pointer hover:bg-red-700 transition duration-300"> Entrar</button>
+            <a href="{% url 'accounts:register' %}">
+            <button class="bg-red-100 text-red-900 px-5 py-3 font-semibold text-sm cursor-pointer hover:bg-red-300 transition duration-300">
+                Criar Conta
+            </button>
+            </a>
+            <a href="{% url 'accounts:login' %}">
+            <button class="bg-red-900 text-white px-5 py-3 font-semibold text-sm cursor-pointer hover:bg-red-700 transition duration-300">
+                Entrar
+            </button>
+            </a>
         </div>
     </header>
     <div class="flex justify-center flex-grow">

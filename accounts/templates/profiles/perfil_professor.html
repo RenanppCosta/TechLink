@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block titles %}
-    Techlink | Perfil
+    Techlink | Seu Perfil
 {% endblock %}
 
 
@@ -177,9 +177,30 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Áreas de Conhecimento:</label>
-          {{ professor_form.areas_conhecimento }}
-          {{ professor_form.areas_conhecimento.errors }}
+          <label class="block text-sm font-medium text-gray-700">Temas</label>
+          <div id="temas-container">
+            <div class="tema-input flex items-center gap-2 mb-2">
+              <input type="text" id="novo-tema-input" class="tema-field border px-2 py-1 rounded" placeholder="Digite um tema">
+              <button type="button" id="add-tema-btn" class="bg-green-500 text-white px-2 py-1 rounded">+</button>
+            </div>
+          </div>
+          {% if temas_error %}
+            <p class="text-red-600 text-sm">{{ temas_error }}</p>
+          {% endif %}
+
+          <ul id="temas-list" class="flex flex-wrap gap-2">
+            {% for tema in professor_form.instance.temas.all %}
+              <li class="bg-green-200 px-3 py-1 rounded-full text-gray-800 text-sm flex items-center gap-2" data-tema-id="{{ tema.id }}">
+                {{ tema.nome }}
+                <button type="button" class="ml-2 text-red-600 hover:text-red-800 remove-tema-salvo-btn" title="Remover tema">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+                <input type="hidden" name="temas_salvos[]" value="{{ tema.id }}">
+              </li>
+            {% empty %}
+              <li class="text-gray-500">Nenhum tema cadastrado.</li>
+            {% endfor %}
+          </ul>
         </div>
 
         <div class="pt-4">
@@ -191,61 +212,87 @@
 </main>
 
 <script>
-
   document.addEventListener('DOMContentLoaded', function() {
-    // Seleciona os elementos do DOM
+    // Preview da imagem de perfil
     const fileInput = document.getElementById('{{ profile_form.foto_perfil.id_for_label }}');
-
     const imagePreview = document.getElementById('image-preview');
-
-    // Verifica se os elementos existem na página
     if (fileInput && imagePreview) {
-        // Adiciona um "ouvinte" para o evento 'change' no input de arquivo
         fileInput.addEventListener('change', function(event) {
-            // Pega o primeiro arquivo selecionado pelo usuário
             const file = event.target.files[0];
-
-            // Se um arquivo foi realmente selecionado...
             if (file) {
-                // Cria um objeto FileReader para ler o arquivo
                 const reader = new FileReader();
-
-                // Define o que acontece quando o arquivo terminar de ser lido
                 reader.onload = function(e) {
-                    // Atualiza o atributo 'src' da tag <img> com o resultado da leitura
-                    // O resultado é uma string Base64 que representa a imagem
                     imagePreview.src = e.target.result;
                 };
-
-                // Pede ao FileReader para ler o arquivo como uma URL de dados (Base64)
                 reader.readAsDataURL(file);
             }
         });
     }
-});
-        // 1. Seleciona todos os botões que têm a classe 'tab-button'
-        const tabButtons = document.querySelectorAll('.tab-button');
 
-        // Classes que definem o estado ATIVO
-        const activeClasses = ['border-red-500', 'text-gray-900'];
-        // Classes que definem o estado INATIVO
-        const inactiveClasses = ['border-transparent', 'text-gray-500'];
-
-        // 2. Adiciona um "ouvinte" de clique para cada botão
-        tabButtons.forEach(clickedButton => {
-            clickedButton.addEventListener('click', () => {
-                
-                // 3. Remove o estado ativo de TODOS os botões
-                tabButtons.forEach(button => {
-                    button.classList.remove(...activeClasses);
-                    button.classList.add(...inactiveClasses);
-                });
-                
-                // 4. Adiciona o estado ativo APENAS ao botão que foi clicado
-                clickedButton.classList.remove(...inactiveClasses);
-                clickedButton.classList.add(...activeClasses);
+    // Tabs de navegação
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const activeClasses = ['border-red-500', 'text-gray-900'];
+    const inactiveClasses = ['border-transparent', 'text-gray-500'];
+    tabButtons.forEach(clickedButton => {
+        clickedButton.addEventListener('click', () => {
+            tabButtons.forEach(button => {
+                button.classList.remove(...activeClasses);
+                button.classList.add(...inactiveClasses);
             });
+            clickedButton.classList.remove(...inactiveClasses);
+            clickedButton.classList.add(...activeClasses);
         });
-</script>
+    });
+
+    // Adicionar temas dinamicamente à lista (não salvos ainda)
+    const addTemaBtn = document.getElementById('add-tema-btn');
+    const novoTemaInput = document.getElementById('novo-tema-input');
+    const temasList = document.getElementById('temas-list');
+
+    addTemaBtn.addEventListener('click', function() {
+        const tema = novoTemaInput.value.trim();
+        if (tema) {
+            // Cria o elemento li com fundo vermelho
+            const li = document.createElement('li');
+            li.className = 'bg-red-200 px-3 py-1 rounded-full text-gray-800 text-sm flex items-center gap-2';
+            li.innerHTML = `
+                ${tema}
+                <button type="button" class="ml-2 text-red-600 hover:text-red-800 remove-tema-btn" title="Remover tema">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+                <input type="hidden" name="temas[]" value="${tema}">
+            `;
+            temasList.appendChild(li);
+            novoTemaInput.value = '';
+        }
+    });
+
+    // Remover temas adicionados dinamicamente (não salvos)
+    temasList.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-tema-btn')) {
+            e.target.closest('li').remove();
+        }
+    });
+    // Remover temas já salvos (marcar para remoção)
+    temasList.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-tema-salvo-btn')) {
+            const li = e.target.closest('li');
+            // Adiciona um campo hidden para indicar remoção
+            const temaId = li.getAttribute('data-tema-id');
+            const inputRemover = document.createElement('input');
+            inputRemover.type = 'hidden';
+            inputRemover.name = 'remover_temas[]';
+            inputRemover.value = temaId;
+            li.appendChild(inputRemover);
+            // Esconde o tema visualmente
+            li.style.display = 'none';
+        }
+        if (e.target.closest('.remove-tema-btn')) {
+            e.target.closest('li').remove();
+        }
+    });
+
+  });
+  </script>
 {% endblock %}
 

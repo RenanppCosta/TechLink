@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from accounts.models import PerfilProfessor
 from accounts.forms.user_form import CustomPasswordChangeForm, CustomUserCreationForm, UserProfileUpdateForm
-from accounts.forms.professor_form import PerfilProfessorForm
+from accounts.forms import PerfilProfessorForm, TemaForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
@@ -49,14 +49,34 @@ class UserProfileEditView(LoginRequiredMixin, TemplateView):
         elif 'submit_professor' in request.POST and usuario.tipo == 'professor':
             perfil_professor, created = PerfilProfessor.objects.get_or_create(usuario=usuario)
             professor_form = PerfilProfessorForm(request.POST, instance=perfil_professor)
+            temas_digitados = request.POST.getlist('temas[]')  
+
             if professor_form.is_valid():
-                professor_form.save()
+                perfil = professor_form.save(commit=False)
+                from accounts.models import Tema
+                temas_objs = []
+                for nome in temas_digitados:
+                    nome = nome.strip()
+                    if nome:
+                        tema, _ = Tema.objects.get_or_create(nome=nome)
+                        temas_objs.append(tema)
+                perfil.save()
+
+                # Remover temas marcados para remoção
+                remover_temas = request.POST.getlist('remover_temas[]')
+                if remover_temas:
+                    perfil.temas.remove(*remover_temas)
+
+                # Adicionar novos temas
+                for tema in temas_objs:
+                    if not perfil.temas.filter(pk=tema.pk).exists():
+                        perfil.temas.add(tema)
                 return redirect('accounts:self_user_profile')
 
             context = self.get_context_data()
             context['professor_form'] = professor_form
             return self.render_to_response(context)
-             
+                    
         elif 'submit_senha' in request.POST:
             password_form = PasswordChangeForm(user=usuario, data=request.POST)
             if password_form.is_valid():
