@@ -4,7 +4,7 @@ from accounts.models import PerfilProfessor
 class PerfilProfessorForm(forms.ModelForm):
     class Meta:
         model = PerfilProfessor
-        fields = ['apresentacao', 'valor_hora',]
+        fields = ['apresentacao', 'valor_hora']
         widgets = {
             'apresentacao': forms.Textarea(attrs={
                 'class': 'w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 outline-none',
