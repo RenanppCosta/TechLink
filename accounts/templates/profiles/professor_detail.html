@@ -25,7 +25,7 @@
         {% if perfil_professor.usuario.foto_perfil %}
           <img src="{{ perfil_professor.usuario.foto_perfil.url }}" alt="Foto do professor" class="foto-professor" />
         {% else %}
-          <img src="{% static 'img/instrutor.png' %}" alt="Foto do professor" class="foto-professor" />
+          <img src="{% static 'img/default-avatar.jpg' %}" alt="Foto do professor" class="foto-professor" />
         {% endif %}
         <div class="texto-professor">
           <h1 id="nomeProfessor">{{ perfil_professor.usuario.nome }} {{ perfil_professor.usuario.sobrenome }}</h1>
@@ -44,7 +44,7 @@
   </section>
 
   <!-- SOBRE MIM + AGENDA lado a lado -->
-  <div class="conteudo-inferior">
+  <div class="conteudo-inferior mb-8">
     <aside class="sobre-mim">
       <h3>Sobre mim</h3>
       <p id="textoSobre">
@@ -101,7 +101,7 @@
         </form>
         </div>
 
-        <div class="btn-wrapper">
+        <div class="btn-wrapper mt-8">
             <button id="btn-confirmar">Confirmar agendamento</button>
         </div>
 

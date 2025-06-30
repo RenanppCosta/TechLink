@@ -15,12 +15,10 @@
 
     <div class="flex flex-col lg:flex-row justify-center items-center lg:items-start mt-16 gap-16 px-4">
         
-        <!-- Coluna da Esquerda: Método de Pagamento -->
         <div class="flex flex-col">
             <h2 id="payment-method-title" class="text-gray-900 font-semibold text-3xl mb-10">Método de Pagamento</h2>
             
             <div id="payment-method-selector" class="flex gap-4 w-full min-w-[400px]">
-                <!-- Cartão de Crédito (pré-selecionado) -->
                 <div id="option-card" class="payment-option flex justify-between items-center border border-green-500 px-4 py-2 flex-3 cursor-pointer" data-method="card">
                     <div class="flex items-center gap-3">
                         <i class="fa-solid fa-credit-card text-xl" style="color: #ff6636;"></i>
@@ -28,14 +26,12 @@
                     </div>
                     <i class="fa-solid fa-circle-check text-green-600 text-xl"></i>
                 </div>
-                <!-- Pix -->
                 <div id="option-pix" class="payment-option border border-gray-400 px-4 py-2 flex items-center gap-3 flex-1 cursor-pointer" data-method="pix">
                     <img class="w-[24px] h-[24px]" src="{% static 'img/pix.png' %}" alt="ícone do pix">
                     <span class="text-gray-700">Pix</span>
                 </div>
             </div>
 
-            <!-- Formulário de Pagamento (contém ambos os fluxos) -->
             <form method="post" class="w-full mt-6" id="payment-form" novalidate>
                 {% csrf_token %}
                 <div id="card-form-fields">
@@ -52,7 +48,6 @@
                 </button>
             </form>
 
-            <!-- Container para exibir o QR Code do Pix -->
             <div id="pix-display" class="hidden text-center p-2 border border-gray-200">
                 <h3 class="text-2xl font-semibold mb-4">Pague com Pix para Finalizar</h3>
                 <p class="text-gray-600 mb-4">Escaneie o QR Code abaixo com seu app do banco.</p>
@@ -64,31 +59,27 @@
             </div>
         </div>
 
-        <!-- Coluna da Direita: Resumo do Pedido -->
         <div class="border border-gray-200 w-full md:w-[536px]">
             <div class="border-b border-gray-200 w-full p-6 flex flex-col">
                 <span class="text-gray-900 text-xl font-medium mb-4">Agendamento</span>
                 <div class="flex flex-col text-gray-900">
-                    <span>Instrutor: Fernando Ribeiro</span> 
-                    <span> Dia: 26/05/2025</span>
-                    <span>Horário: 14:00 às 15:00</span> 
+                    <span>Instrutor: {{ professor.usuario.nome }} {{ professor.usuario.sobrenome }}</span>
+                    {% for horario in horarios_agendados %}
+                        <span>Dia: {{ horario.data|date:"d/m/Y" }} | Horário: {{ horario.hora|time:"H:i" }}</span>
+                    {% endfor %}
                 </div>
             </div>
             <div class="p-6 w-full flex flex-col">
                 <span class="text-gray-900 text-xl font-medium mb-4">Resumo da Compra</span>
                 <div class="flex justify-between mb-5">
-                    <span class="text-gray-600">Subtotal</span>
-                    <span class="text-gray-900">R$ 50,00</span>
-                </div>
-                <div class="flex justify-between border-b border-gray-200 pb-6">
-                    <span class="text-gray-600">Cupom</span>
-                    <span class="text-gray-900">8%</span>
+                    <span class="text-gray-600">Subtotal ({{ horarios_agendados|length }}h)</span>
+                    <span class="text-gray-900">R$ {{ valor_total|floatformat:2 }}</span>
                 </div>
             </div>
             <div class="px-6 w-full flex flex-col">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-800">Total:</span>
-                    <span class="text-gray-800 font-semibold text-2xl pb-6">R$ 46,00</span>
+                    <span class="text-gray-800 font-semibold text-2xl pb-6">R$ {{ valor_total|floatformat:2 }}</span>
                 </div>
             </div>
         </div>
@@ -98,6 +89,11 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    // ---- DADOS VINDOS DO DJANGO ----
+    const amountInCents = {{ valor_em_centavos }};
+    const horarioIds = JSON.parse('{{ horario_ids_json|escapejs }}');
+    // --------------------------------
+
     let selectedPaymentMethod = 'card';
     const stripe = Stripe("{{ STRIPE_PUBLISHABLE_KEY }}");
     let elements = stripe.elements();
@@ -151,6 +147,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const createPaymentUrl = "{% url 'pagamentos:create_payment' %}";
         
+        const requestBody = {
+            payment_method: selectedPaymentMethod,
+            amount: amountInCents,
+            horario_ids: horarioIds,
+        };
+        
         if (selectedPaymentMethod === 'card') {
             if (!paymentForm.checkValidity()) {
                 paymentForm.reportValidity();
@@ -162,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const response = await fetch(createPaymentUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
-                    body: JSON.stringify({ payment_method: 'card' })
+                    body: JSON.stringify(requestBody)
                 });
                 const { clientSecret, error } = await response.json();
                 if (error) throw new Error(error);
@@ -174,10 +176,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
                 if (stripeError) throw new Error(stripeError.message);
+
                 if (paymentIntent && paymentIntent.status === 'succeeded') {
-                    alert('Pagamento com cartão realizado com sucesso!');
-                    // Idealmente, redirecionar para uma página de sucesso
-                    // window.location.href = '/pagina-de-sucesso/';
+                    window.location.href = `{% url 'pagamentos:payment_success' %}?payment_intent=${paymentIntent.id}`;
                 }
             } catch (e) {
                 alert(e.message);
@@ -189,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const response = await fetch(createPaymentUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
-                    body: JSON.stringify({ payment_method: 'pix' })
+                    body: JSON.stringify(requestBody)
                 });
                 const data = await response.json();
                 if (data.error) {
@@ -204,7 +205,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (paymentMethodTitle) paymentMethodTitle.style.display = 'none'; 
                 if (pixDisplay) pixDisplay.style.display = 'block';
                 
-
             } catch (e) {
                 alert(e.message);
                 submitButton.disabled = false;

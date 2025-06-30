@@ -1,4 +1,6 @@
 from django.db import models
+
+from pagamentos.models import Pagamento
 from .horario import Horario
 
 class Aula(models.Model):
@@ -12,7 +14,13 @@ class Aula(models.Model):
     horario = models.OneToOneField(Horario, on_delete=models.CASCADE, related_name='aula')
     aluno = models.ForeignKey('accounts.PerfilAluno', on_delete=models.CASCADE, related_name='aulas')
     professor = models.ForeignKey('accounts.PerfilProfessor', on_delete=models.CASCADE, related_name='aulas')
-    pago = models.BooleanField(default=False)
+    pagamento = models.ForeignKey(
+        Pagamento, 
+        on_delete=models.SET_NULL,
+        related_name='aulas', 
+        null=True, 
+        blank=True
+    )
     criado_em = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

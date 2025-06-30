@@ -2,42 +2,53 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-# VAI SER USADO QUANDO TIVERMOS O BANCO DE DADOS!!
+from pagamentos.models import Pagamento
 
-@csrf_exempt # Webhooks não enviam token CSRF
+# VAI SER USADO QUANDO TIVERMOS O BANCO DE DADOS!!
+# Arquivo: pagamentos/views.py
+
+@csrf_exempt
 def abacate_pay_webhook(request):
     """
-    Recebe as notificações de pagamento do Abacate Pay.
+    Recebe a notificação de pagamento do Abacate Pay e atualiza o status no nosso sistema.
     """
     if request.method != 'POST':
-        return HttpResponse(status=405)
+        return JsonResponse({'status': 'error', 'message': 'Método não permitido'}, status=405)
 
     try:
-        payload = json.loads(request.body)
-        event_type = payload.get('event') # Ex: 'charge.paid' (verificar na doc do Abacate Pay)
+        data = json.loads(request.body)
+        event_type = data.get('event')
 
-        # Verifique se o evento é de cobrança paga
-        if event_type == 'charge.paid':
-            charge_data = payload.get('data', {})
-            charge_id = charge_data.get('id')
-
-            if charge_id:
-                # 1. Procure o pedido no seu banco de dados usando o charge_id
-                # Ex: order = Order.objects.get(abacate_charge_id=charge_id)
-                
-                # 2. Atualize o status do pedido para "Pago"
-                # Ex: order.status = 'PAID'
-                #     order.save()
-                
-                # 3. Libere o produto/serviço para o cliente
-                # (enviar email, dar acesso, etc.)
-                
-                print(f"Cobrança {charge_id} foi paga com sucesso!")
+        # Verifique na documentação do Abacate Pay o nome exato do evento de pagamento confirmado
+        if event_type == 'pix_qrcode_paid': 
+            charge_data = data.get('data', {})
             
-        # Responda ao Abacate Pay com status 200 para confirmar o recebimento
-        return HttpResponse(status=200)
+            # Usamos o ID que passamos ao criar a cobrança para encontrar nosso registro de pagamento
+            pagamento_id_interno = charge_data.get('external_id')
+            
+            if not pagamento_id_interno:
+                return JsonResponse({'status': 'error', 'message': 'ID externo não encontrado no webhook'}, status=400)
 
+            try:
+                # Encontra o pagamento que estava pendente
+                pagamento = Pagamento.objects.get(id=pagamento_id_interno, status='pendente')
+                
+                # ATUALIZA O STATUS PARA PAGO!
+                pagamento.status = 'pago'
+                pagamento.save()
+                
+                # Neste ponto, você poderia enviar um e-mail de confirmação para o aluno, etc.
+                
+                return JsonResponse({'status': 'success'})
+
+            except Pagamento.DoesNotExist:
+                # O pagamento não foi encontrado ou já foi processado.
+                return JsonResponse({'status': 'error', 'message': 'Pagamento não encontrado ou já processado'}, status=404)
+                
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'JSON inválido'}, status=400)
     except Exception as e:
-        # Em caso de erro, logue e retorne um erro para que o Abacate Pay possa tentar novamente.
-        print(f"Erro ao processar webhook do Abacate Pay: {e}")
-        return JsonResponse({'error': 'Erro interno'}, status=400)
+        # Em produção, logue este erro
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'ok', 'message': 'Evento não processado'})

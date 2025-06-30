@@ -8,38 +8,37 @@ from .models import Horario, Aula
 class CriarAgendamentoView(LoginRequiredMixin, View):
     def post(self, request, professor_id):
         professor = get_object_or_404(PerfilProfessor, id=professor_id)
-        try:
-            aluno = request.user.aluno_profile  # <-- use o related_name correto
-        except PerfilAluno.DoesNotExist:
-            return render(request, 'profiles/professor_detail.html', {
-                'perfil_professor': professor,
-                'erro_permissao': True,
-                # Adicione outros contextos necessários para renderizar a agenda corretamente
-            })
+        horarios_selecionados_str = request.POST.get("horarios", "")
+        
+        if not horarios_selecionados_str:
+            return redirect('accounts:professor_detail', pk=professor.id)
 
-        horarios_str = request.POST.get("horarios", "")
-        horarios_list = horarios_str.split(",")
-        for horario_str in horarios_list:
-            dia, hora = horario_str.rsplit("-", 1)
-            data = dia_para_data(dia)
+        horarios_str_list = horarios_selecionados_str.split(",")
+        horario_ids = []
+        
+        for horario_str in horarios_str_list:
             try:
-                horario = Horario.objects.get(
-                    professor=professor,
-                    data=data,
-                    hora=hora,
-                    disponivel=True  # só permite se estiver disponível!
-                )
+                dia, hora = horario_str.rsplit("-", 1)
+                data = dia_para_data(dia)
+                horario_obj = Horario.objects.get(professor=professor, data=data, hora=hora, disponivel=True)
+                horario_ids.append(horario_obj.id)
             except Horario.DoesNotExist:
-                continue  # ou retorne erro para o usuário
-            horario.disponivel = False
-            horario.save()
-            Aula.objects.create(
-                horario=horario,
-                aluno=aluno,
-                professor=professor,
-                pago=False
-            )
-        return redirect('accounts:professor_detail', pk=professor.id)
+                continue
+
+        if not horario_ids:
+            return redirect('accounts:professor_detail', pk=professor.id)
+
+        valor_total = len(horario_ids) * professor.valor_hora
+
+        # A PARTE MAIS IMPORTANTE: SALVAR TUDO NA SESSÃO
+        request.session['checkout_context'] = {
+            'professor_id': professor.id,
+            'horario_ids': horario_ids,
+            'valor_total': float(valor_total),
+            'valor_em_centavos': int(valor_total * 100)
+        }
+
+        return redirect('pagamentos:pagamentos')
     
 class AulaConcluirView(LoginRequiredMixin, View):
     def post(self, request, aula_id):
