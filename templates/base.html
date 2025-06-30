@@ -24,11 +24,13 @@
             <button class="bg-red-300 text-red-900 px-5 py-3 font-semibold text-sm cursor-pointer hover:bg-red-100 transition duration-300">Criar Conta</button>
         </div>
     </header> <!-->
-     <header class="flex justify-between p-4 border-b-gray-200 border-b">
+     <header class="hidden md:flex justify-between p-4 border-b-gray-200 border-b">
         <div class="flex items-center gap-2">
-            <img src="{% static 'img/GraduationCap.svg' %}" alt="Chapéu de graduação">
-            <h1 class="font-semibold text-gray-900 text-3xl">TechLink</h1>
-           <form method="get" action="{% url 'techlink:buscar' %}" class="w-full max-w-xl mx-auto">
+            <a href="{% url 'techlink:home' %}" class="flex items-center gap-2 mr-4">
+                <img src="{% static 'img/GraduationCap.svg' %}" alt="Chapéu de graduação">
+                <h1 class="font-semibold text-gray-900 text-3xl">TechLink</h1>
+            </a>
+           <form method="get" action="{% url 'techlink:buscar' %}" class="w-full max-w-xl mx-auto ml-8">
     
                 <div class="relative w-full">
                     
@@ -50,11 +52,80 @@
             </form>
 
         </div>
-        <div class="flex gap-3 items-center">
-            <button class="bg-red-100 text-red-900 px-5 py-3 font-semibold text-sm cursor-pointer hover:bg-red-300 transition duration-300">Criar Conta</button>
-            <button class="bg-red-900 text-white px-5 py-3 font-semibold text-sm cursor-pointer hover:bg-red-700 transition duration-300"> Entrar</button>
+        {% if user.is_authenticated %}
+            <div class="flex gap-3 items-center">
+                <a href="{% url 'accounts:self_user_profile' %}" class="flex items-center gap-2 mx-4">
+                    <span>Bem vindo, {{ user.nome }}</span>
+                    {% if usuario.foto_perfil %}
+                        <img src="{{ user.foto_perfil.url }}" alt="Imagem perfil" class="h-[48px] w-[48px] rounded-full object-cover">
+                    {% else %}
+                        <img src="{% static 'img/default-avatar.jpg' %}" alt="Imagem perfil" class="h-[48px] w-[48px] rounded-full object-cover">
+                    {% endif %}
+                </a>
+                <form action="{% url 'accounts:logout' %}" method="post" class="w-full">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full text-red-700 px-3 py-3 font-semibold text-sm cursor-pointer">Sair</button>
+                </form>
+                
+            </div>
+        {% else %}
+            <div class="flex gap-3 items-center">
+                <a href="{% url 'accounts:register' %}">
+                <button class="bg-red-100 text-red-900 px-5 py-3 font-semibold text-sm cursor-pointer hover:bg-red-300 transition duration-300">
+                    Criar Conta
+                </button>
+                </a>
+                <a href="{% url 'accounts:login' %}">
+                <button class="bg-red-900 text-white px-5 py-3 font-semibold text-sm cursor-pointer hover:bg-red-700 transition duration-300">
+                    Entrar
+                </button>
+                </a>
+            </div>
+        {% endif %}
+        
+    </header>
+
+    <header class="md:hidden p-4 border-b-gray-200 border-b relative">
+        <div class="flex justify-between items-center w-full">
+            <div class="flex items-center gap-2">
+                <img src="{% static 'img/GraduationCap.svg' %}" alt="Chapéu de graduação">
+                <h1 class="font-semibold text-gray-900 text-3xl">TechLink</h1>
+            </div>
+            <button id="menu-button-mobile" class="p-2 text-gray-700 hover:text-red-900">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </button>
+        </div>
+
+        <div id="mobile-menu-content" class="hidden mt-4 space-y-4">
+            <form method="get" action="{% url 'techlink:buscar' %}" class="w-full">
+                <div class="relative w-full"><input type="text" name="q" placeholder="O que gostaria de aprender?" value="{{ request.GET.q }}" class="w-full pl-4 pr-12 py-3 text-gray-700 bg-white border border-gray-200"><button type="submit" class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-red-800"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></button></div>
+            </form>
+
+            {% if user.is_authenticated %}
+                <div class="flex flex-col items-center gap-3 pt-2 border-t border-gray-300">
+                    <a href="{% url 'accounts:self_user_profile' %}" class="flex items-center gap-2">
+                        <span class="text-xl text-gray-900 font-medium">Bem vindo, {{ user.nome }}</span>
+                        {% if usuario.foto_perfil %}
+                            <img src="{{ user.foto_perfil.url }}" alt="Imagem perfil" class="h-[64px] w-[64px] rounded-full object-cover">
+                        {% else %}
+                            <img src="{% static 'img/default-avatar.jpg' %}" alt="Imagem perfil" class="h-[64px] w-[64px] rounded-full object-cover">
+                        {% endif %}
+                    </a>
+                    <form action="{% url 'accounts:logout' %}" method="post" class="w-full">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full bg-red-900 text-white px-5 py-3 font-semibold text-sm">Sair</button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="flex flex-col gap-3 pt-2 border-t">
+                    <a href="{% url 'accounts:register' %}" class="w-full"><button class="w-full bg-red-100 text-red-900 px-5 py-3 font-semibold text-sm">Criar Conta</button></a>
+                    <a href="{% url 'accounts:login' %}" class="w-full"><button class="w-full bg-red-900 text-white px-5 py-3 font-semibold text-sm">Entrar</button></a>
+                </div>
+            {% endif %}
         </div>
     </header>
+
+
     <div class="flex justify-center flex-grow">
             {% block content %}
             {% endblock %}          
@@ -208,7 +279,18 @@
             <span class="text-gray-400">© 2025 - Projeto da Disciplina Laboratório e Desenvolvimento de Software - Universidade Veiga de Almeida</span>
         </div>
     </footer>
-    {% block scripts %}{% endblock %}
+    {% block scripts %}
+    <script>
+        const menuButtonMobile = document.getElementById('menu-button-mobile');
+        const mobileMenuContent = document.getElementById('mobile-menu-content');
+
+        if (menuButtonMobile && mobileMenuContent) {
+            menuButtonMobile.addEventListener('click', () => {
+                mobileMenuContent.classList.toggle('hidden');
+            });
+        }
+    </script>
+    {% endblock %}
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script> -->
 </body>
 </html>

@@ -1,73 +1,105 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Buscar Professores</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            padding: 8px;
-            width: 300px;
-        }
-        button {
-            padding: 8px 12px;
-        }
-        .professor {
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Buscar Professores</h1>
+{% extends "base.html" %}
+{% load static %}
 
-    <form method="get">
-        <input type="text" name="q" placeholder="Buscar por palavra-chave na apresentação" value="{{ request.GET.q }}">
-        <button type="submit">Pesquisar</button>
-    </form>
+{% block titles %}
+    Techlink | Perfil
+{% endblock %}
 
-    {% if professores %}
-        {% for professor in professores %}
-            <div class="professor">
-                <h2>{{ professor.usuario.nome }}</h2>
-                <p><strong>Apresentação:</strong> {{ professor.apresentacao }}</p>
-                <p><strong>Valor/hora:</strong> R$ {{ professor.valor_hora }}</p>
+{% block styles %}
+<style>
+.card-hover {
+    transition: box-shadow 0.2s;
+    cursor: pointer;
+}
+.card-hover:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    background: #f9fafb;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Filtro visual e formulário de ordenação -->
+<div class="inline-flex flex-col justify-center items-center mb-8 w-full">
+  <div class="w-[1320px] inline-flex justify-between items-center">
+    <form method="get" action="" class="flex w-full justify-between items-center gap-6">
+      <div class="flex justify-start items-start gap-6">
+        <div data-color="Gray" data-filter="True" data-icon="False" data-positions="Tertiary" data-size="Medium" data-status="Normal" class="px-6 bg-white outline outline-1 outline-offset-[-1px] outline-[#ffddd1] flex justify-center items-center gap-6">
+          <div class="flex justify-center items-center gap-3">
+            <div class="w-6 h-6 relative">
+              <!-- ... ícone ... -->
             </div>
-        {% endfor %}
-    {% else %}
-        <p>Nenhum professor encontrado com esse termo.</p>
-    {% endif %}
-
-
-            <!-- ESTAVA NA PAGINA HOME -->
-    
-    <!-- <form method="get" action="{% url 'techlink:buscar' %}">
-        <input type="text" name="q" placeholder="Nome ou área de conhecimento" value="{{ request.GET.q }}" class="form-control mb-3">
-        <button type="submit" class="btn btn-primary">Buscar</button>
+            <div class="justify-start text-[#1d1f26] text-base font-semibold font-['Inter'] capitalize leading-[48px]">Filtro</div>
+          </div>
+          <div class="px-1.5 py-1 bg-[#ffeee8] inline-flex flex-col justify-center items-center gap-2.5">
+            <div class="text-center justify-start text-[#ff6636] text-xs font-semibold font-['Inter'] leading-none">3</div>
+          </div>
+        </div>
+        <div class="w-[457px] h-12 relative bg-white outline outline-1 outline-offset-[-1px] outline-[#e8eaef] overflow-hidden">
+          <div class="left-[18px] top-[12px] absolute inline-flex justify-start items-center gap-3">
+            <div class="w-6 h-6 relative">
+              <!-- ... ícone ... -->
+            </div>
+            <div class="justify-start text-[#1d1f26] text-base font-normal font-['Inter'] leading-normal">
+              <input
+                type="text"
+                name="q"
+                placeholder="Nome ou área de conhecimento"
+                value="{{ request.GET.q }}"
+                class="border rounded px-2 py-1"
+                style="min-width: 200px;"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-center items-center gap-6">
+        <div class="justify-start text-[#4d5565] text-sm font-normal font-['Inter'] leading-snug">Filtrar por:</div>
+        <select name="ordenar" class="border rounded px-2 py-1"
+                onchange="this.form.submit()">
+          <option value="">Mais Populares</option>
+          <option value="asc" {% if request.GET.ordenar == "asc" %}selected{% endif %}>Nome (A-Z)</option>
+          <option value="desc" {% if request.GET.ordenar == "desc" %}selected{% endif %}>Nome (Z-A)</option>
+        </select>
+      </div>
     </form>
-
-    {% if professores %}
-        <ul class="list-group mt-3">
-            {% for prof in professores %}
-                <li class="list-group-item">
+  </div>
+  <div class="w-[1320px] pt-6 pb-4 bg-white shadow-[inset_0px_-1px_0px_0px_rgba(233,234,240,1.00)] inline-flex justify-between items-center">
+    <div class="justify-start">
+      <span class="text-[#1d1f26] text-sm font-medium font-['Inter'] leading-tight">
+        {{ professores|length }}
+      </span>
+      <span class="text-[#4d5565] text-sm font-normal font-['Inter'] leading-snug">
+        resultados{% if request.GET.q %} para “{{ request.GET.q }}”{% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+<!-- Resultado -->
+{% if professores %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
+        {% for prof in professores %}
+            <a href="{% url 'accounts:professor_detail' prof.pk %}" style="text-decoration: none; color: inherit;">
+                <div class="card-hover border rounded-lg p-4 mb-2 bg-white">
                     <strong>{{ prof.usuario.nome }} {{ prof.usuario.sobrenome }}</strong><br>
+                    {% if prof.usuario.foto_perfil %}
+                        <img src="{{ prof.usuario.foto_perfil.url }}" alt="Imagem perfil" class="h-[100px] w-[100px] rounded-full object-cover my-2">
+                    {% endif %}
                     Formação: {{ prof.formacao }}<br>
-                    Áreas de conhecimento: {{ prof.areas_conhecimento }}<br>
+                    Temas:
+                    {% for tema in prof.temas.all %}
+                        {{ tema.nome }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        Nenhum tema cadastrado
+                    {% endfor %}<br>
                     Valor/hora: R$ {{ prof.valor_hora }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p class="mt-3">Nenhum professor encontrado.</p>
-    {% endif %} -->
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="mt-3">Nenhum professor encontrado.</p>
+{% endif %}
 
-    
-</body>
-</html>
+{% endblock %}

@@ -4,6 +4,10 @@ from accounts.views import(
     LoginView,
     RegisterView,
     UserProfileEditView,
+    ProfessorDetailView,
+    DeletaTemaView,
+    logout_view,
+    HorarioProfessorView
 )
 from accounts.models import CustomUser
 
@@ -11,8 +15,10 @@ app_name = 'accounts'
 
 urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(next_page='accounts:login'), name='logout'),
+    path('logout/', logout_view, name='logout'),
     path('registrar/', RegisterView.as_view(), name='register'),
-    path('usuario/me', UserProfileEditView.as_view(), name='user_profile'),
-    path('usuario/<int:pk>', UserProfileEditView.as_view(), name='user_profile'),
+    path('seu-perfil', UserProfileEditView.as_view(), name='self_user_profile'),
+    path('professor/<int:pk>', ProfessorDetailView.as_view(), name='professor_detail'),
+    path('tema/delete/<int:tema_id>/', DeletaTemaView.as_view(), name='delete_tema'),
+    path('professor/horarios/', HorarioProfessorView.as_view(), name='horario_professor'),
 ]

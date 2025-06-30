@@ -1,4 +1,5 @@
 from .user_form import CustomUserCreationForm, CustomAuthenticationForm
 from .aluno_form import PerfilAlunoForm
-from .professor_form import ProfessorProfileForm
-from .area_conhecimento_form import AreaConhecimentoForm
+from .professor_form import PerfilProfessorForm
+from .tema_form import TemaForm
+from .horario_disponivel_form import HorarioDisponivelForm

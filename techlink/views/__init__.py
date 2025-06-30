@@ -1,1 +1,2 @@
 from .professor_search_view import ProfessorSearchView
+from .home_view import HomePageView
