@@ -71,14 +71,19 @@
 
     <div class="mt-12 grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] justify-items-center gap-x-1 gap-y-12">
 
-      <div class="cursor-pointer flex flex-col text-center bg-white border border-gray-200 overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2 w-[250px]">
+      {% for prof in professores %}
+      <a href="{% url 'accounts:professor_detail' prof.pk %}" class="cursor-pointer flex flex-col text-center bg-white border border-gray-200 overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2 w-[250px]">
         <div class="flex-shrink-0">
-          <img class="h-56 w-full" src="{% static 'img/instrutor-teste.png'%}" alt="Foto de Caio Rodrigues">
+          <img class="h-56 w-full" src="{% if prof.usuario.foto_perfil %}{{ prof.usuario.foto_perfil.url }}{% else %}{% static 'img/default-avatar.jpg' %}{% endif %}" alt="Foto de {{ prof.usuario.get_full_name }}">
         </div>
         <div class="flex-1 py-2 px-6 flex flex-col justify-center">
           <div>
-            <h3 class="font-semibold text-gray-900">Caio Rodrigues</h3>
-            <p class="mt-1 text-sm text-gray-500">Professor de Espanhol</p>
+            <h3 class="font-semibold text-gray-900">{{ prof.usuario.nome }} {{ prof.usuario.sobrenome }}</h3>
+            <p class="mt-1 text-sm text-gray-500">Professor de{% for tema in prof.temas.all %}
+                     {{ tema.nome }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        Nenhum tema cadastrado
+                    {% endfor %} </p>
           </div>
         </div>
         <div class="border-t border-gray-200 bg-gray-50">
@@ -87,7 +92,7 @@
           </div>
         </div>
       </div>
-
+      {% endfor %}
       <div class="cursor-pointer flex flex-col text-center bg-white border border-gray-200 overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2 w-[250px]">
         <div class="flex-shrink-0">
           <img class="h-56 w-full" src="https://i.imgur.com/L7b1l8A.png" alt="Foto de Pedro Henrique da Silva">
