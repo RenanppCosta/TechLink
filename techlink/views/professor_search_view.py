@@ -1,3 +1,5 @@
+# Em seu arquivo views.py
+
 from django.views.generic import ListView
 from accounts.models import PerfilProfessor
 from django.db.models import Q
@@ -8,10 +10,14 @@ class ProfessorSearchView(ListView):
     context_object_name = 'professores'
 
     def get_queryset(self):
+        """
+        Este método agora retorna a LISTA COMPLETA de professores
+        que correspondem à busca e ordenação.
+        """
         query = self.request.GET.get('q', '').strip()
         ordenar = self.request.GET.get('ordenar')
 
-        qs = PerfilProfessor.objects.all()
+        qs = PerfilProfessor.objects.select_related('usuario').prefetch_related('temas').all()
 
         if query:
             qs = qs.filter(
@@ -29,9 +35,12 @@ class ProfessorSearchView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
         query = self.request.GET.get('q', '').strip()
-        
         context['search_query'] = query
-        
+
+        if query:
+            context['professores_destacados'] = self.object_list[:6]
+        else:
+            context['professores_destacados'] = PerfilProfessor.objects.select_related('usuario').all()[:6]
+
         return context

@@ -22,7 +22,7 @@
         </h1>
     {% endif %}
     <div class="flex flex-wrap justify-center gap-8 mt-3">
-        {% for prof in professores %}
+        {% for prof in professores_destacados %}
             <a href="{% url 'accounts:professor_detail' prof.pk %}" style="text-decoration: none; color: inherit;">
               <div class="cursor-pointer flex flex-col text-center bg-white border border-gray-200 overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2 w-[250px] h-full">
                 <div class="flex-shrink-0">
