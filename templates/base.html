@@ -103,6 +103,7 @@
             </form>
 
             {% if user.is_authenticated %}
+            <a href="{% url 'accounts:self_user_profile' %}">
                 <div class="flex flex-col items-center gap-3 pt-2 border-t border-gray-300">
                     <a href="{% url 'accounts:self_user_profile' %}" class="flex items-center gap-2">
                         <span class="text-xl text-gray-900 font-medium">Bem vindo, {{ user.nome }}</span>
@@ -117,6 +118,7 @@
                         <button type="submit" class="w-full bg-red-900 text-white px-5 py-3 font-semibold text-sm">Sair</button>
                     </form>
                 </div>
+            </a>
             {% else %}
                 <div class="flex flex-col gap-3 pt-2 border-t">
                     <a href="{% url 'accounts:register' %}" class="w-full"><button class="w-full bg-red-100 text-red-900 px-5 py-3 font-semibold text-sm">Criar Conta</button></a>
