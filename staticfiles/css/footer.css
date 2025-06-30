@@ -1,0 +1,15 @@
+.box-social {
+    background-color: rgba(54, 59, 71, 0.4);
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.box-social:hover {
+    background-color: #8D0000;
+    box-shadow: 0 0 15px 4px rgba(255, 85, 0, 0.5);
+}

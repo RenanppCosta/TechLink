@@ -1,0 +1,66 @@
+/* O container principal que vai alinhar tudo */
+.image-upload-container {
+    width: 360px;       /* Defina o tamanho que desejar */
+    height: 360px;
+    overflow: hidden;    /* Esconde qualquer parte da imagem que saia do círculo */
+    border: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* O input de arquivo real, totalmente escondido mas funcional */
+.hidden-file-input {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+/* A imagem de perfil/preview */
+.profile-pic {
+    width: 280px;
+    height: 280px;
+    margin-bottom: 0;
+    margin-left: 0;
+    object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
+    transition: filter 0.3s ease;
+}
+
+/* O nosso botão/label customizado */
+.upload-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 0;
+    
+    background-color: rgba(0, 0, 0, 0.6); /* Fundo preto semi-transparente */
+    color: white;
+    font-family: sans-serif;
+    font-weight: 600;
+    text-align: center;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* Espaço entre o ícone e o texto */
+    
+    cursor: pointer; /* Muda o cursor para indicar que é clicável */
+    
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.image-upload-container:hover .profile-pic {
+    filter: brightness(0.7); /* Escurece a imagem no hover */
+}
+
+/* Estilo para os erros do Django */
+.image-errors {
+    color: #dc3545; /* Vermelho para erros */
+    font-size: 0.875em;
+    text-align: center;
+    margin-top: 5px;
+}
