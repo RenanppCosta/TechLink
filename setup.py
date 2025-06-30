@@ -14,6 +14,14 @@ def main():
     if not os.path.isdir(venv_path):
         print("Criando ambiente virtual...")
         run_command(f"{sys.executable} -m venv venv")
+    
+    # Remover o banco de dados SQLite se existir
+    db_path = os.path.join(os.getcwd(), 'db.sqlite3')
+    if os.path.exists(db_path):
+        print("Removendo banco de dados existente...")
+        os.remove(db_path)
+
+
 
     is_windows = platform.system() == "Windows"
     activate = os.path.join("venv", "Scripts", "activate") if is_windows else "source venv/bin/activate"
