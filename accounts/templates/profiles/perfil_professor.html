@@ -16,7 +16,7 @@
 {% block content %}
 
 <main class="w-full flex flex-col items-center">
-  <div class="h-[280px] w-full absolute px-4" style="background-color: #FDFCF6;">
+  <div class="h-[280px] w-full relative px-4" style="background-color: #FDFCF6;">
     <div class="w-full flex flex-col mx-auto bg-white border border-gray-300 relative top-25 max-w-[1320px] mx-4">
       <div class="flex lg:justify-between flex-col lg:flex-row items-center py-6 px-10 gap-4 lg:gap-0">
         <div class="flex gap-5 items-center">
@@ -34,19 +34,120 @@
       </div>
 
       <div class="flex items-center w-full justify-center border-b border-t border-gray-200 md:gap-32 gap-8">
-            <button class="tab-button text-gray-500 font-medium py-3 px-6 border-b-2 border-transparent transition-colors duration-300 cursor-pointer">
-                Instrutores
-            </button>
-            
-            <button class="tab-button text-gray-900 font-medium py-3 px-6 border-b-2 border-red-500 transition-colors duration-300 cursor-pointer">
-                Configurações
-            </button>
+          <button class="tab-button text-gray-900 font-medium py-3 px-6 border-b-2 border-red-500 transition-colors duration-300 cursor-pointer" data-tab="aulas">
+              Aulas
+          </button>
+          <button class="tab-button text-gray-500 font-medium py-3 px-6 border-b-2 border-transparent transition-colors duration-300 cursor-pointer" data-tab="config">
+              Configurações
+          </button>
       </div>
-      
     </div>
   </div>
 
-  <div class="w-full flex justify-center flex-col mt-[420px] lg:mt-[350px] max-w-[1320px] px-4 mb-8">
+  <div id="tab-content-aulas">
+    <div class="w-full flex justify-center flex-col mt-[200px] lg:mt-[150px] max-w-[1320px] px-4 mb-8 mt-5">
+        <div class="w-full">
+          <h2 class="font-semibold text-gray-900 text-3xl mb-8 text-center">Aulas</h2>
+        </div>
+        <div class="flex flex-col lg:flex-row gap-12 w-full items-start">
+            <h2 class="font-semibold text-gray-900 text-2xl mt-8 mb-4">Horários Agendados</h2>
+            <div class="overflow-x-auto w-full">
+                <table class="w-full border-separate border-spacing-2 text-sm md:text-base">
+                    <thead>
+                        <tr>
+                            <th class="border px-2 py-1">Data</th>
+                            <th class="border px-2 py-1">Hora</th>
+                            <th class="border px-2 py-1">Aluno</th>
+                            <th class="border px-2 py-1">Email</th>
+                            <th class="border px-2 py-1">Status</th>
+                            <th class="border px-2 py-1">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for aula in aulas_agendadas %}
+                        <tr>
+                            <td class="border px-2 py-1">{{ aula.horario.data|date:"d/m/Y" }}</td>
+                            <td class="border px-2 py-1">{{ aula.horario.hora }}</td>
+                            <td class="border px-2 py-1">
+                                {{ aula.aluno.usuario.nome }} {{ aula.aluno.usuario.sobrenome }}
+                            </td>
+                            <td class="border px-2 py-1">
+                                {{ aula.aluno.usuario.email }}
+                            </td>
+                            <td class="border px-2 py-1">
+                                <span class="font-semibold">
+                                    {% if aula.status == 'agendada' %}Agendada
+                                    {% elif aula.status == 'realizada' %}Concluída
+                                    {% else %}Cancelada
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td class="border px-2 py-1">
+                                {% if aula.status == 'agendada' %}
+                                <form method="post" action="{% url 'agendamentos:marcar_aula_concluida' aula.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-green-700 hover:underline">Concluir</button>
+                                </form>
+                                <form method="post" action="{% url 'agendamentos:cancelar_aula' aula.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-red-700 hover:underline">Cancelar</button>
+                                </form>
+                                {% elif aula.status == 'realizada' or aula.status == 'cancelada' %}
+                                <form method="post" action="{% url 'agendamentos:excluir_aula' aula.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-gray-500 hover:text-red-700 hover:underline">Excluir</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="border px-2 py-1 text-center text-gray-500">Nenhum horário agendado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+      </div>
+      <!-- Formulário de horários disponíveis (mova para cá) -->
+      <div class="w-full flex flex-col justify-start max-w-[1320px] px-4 mb-12 mt-12">
+        <h2 class="font-semibold text-gray-900 text-2xl mb-6">Disponibilidade de Horários</h2>
+        <form method="post">
+          {% csrf_token %}
+          <div class="overflow-x-auto">
+            <table class="mb-6 w-full min-w-[600px] border-separate border-spacing-3 text-sm md:text-base">
+              <thead>
+                <tr>
+                  <th class="px-6 py-3">Horário</th>
+                  {% for dia in form.dias %}
+                    <th class="px-6 py-3">{{ dia|date:"d/m" }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for hora in form.horarios %}
+                  <tr>
+                    <td class="px-6 py-3 whitespace-nowrap">{{ hora }}</td>
+                    {% for dia in form.dias %}
+                      <td class="px-6 py-3 text-center align-middle">
+                        {% with nome=dia|stringformat:"s"|add:"|"|add:hora %}
+                          {{ form|field_by_name:nome }}
+                        {% endwith %}
+                      </td>
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <button type="submit" name="submit_horarios" class="bg-red-800 text-white py-2 px-4 rounded hover:bg-red-900 mt-4">Salvar Disponibilidade</button>
+        </form>
+      </div>
+  </div>
+
+  <div id="tab-content-config" class="hidden">
+    <div class="w-full flex justify-center flex-col mt-[420px] lg:mt-[350px] max-w-[1320px] px-4 mb-8">
     <h2 class="font-semibold text-gray-900 text-3xl mb-8">Configurações</h2>
     
     <div class="flex flex-col lg:flex-row gap-12 w-full items-start">       
@@ -119,11 +220,9 @@
             </div>
         </div>
     </form>
-
+    
     </div>
-  </div>
-
-  <div class="w-full flex flex-col justify-start max-w-[1320px] px-4 mb-16">
+      <div class="w-full flex flex-col justify-start max-w-[1320px] px-4 mb-16">
     <h2 class="font-semibold text-gray-900 text-3xl mb-8">Mudar Senha</h2>
 
     <form method="post" class="lg:w-1/2">
@@ -211,171 +310,37 @@
         </div>
       </form>
     </div>
-
-    <!-- Formulário de horários disponíveis -->
-    <div class="w-full flex flex-col justify-start max-w-[1320px] px-4 mb-12 mt-12">
-      <h2 class="font-semibold text-gray-900 text-2xl mb-6">Disponibilidade de Horários</h2>
-      <form method="post">
-        {% csrf_token %}
-        <div class="overflow-x-auto">
-          <table class="mb-6 w-full min-w-[600px] border-separate border-spacing-3 text-sm md:text-base">
-            <thead>
-              <tr>
-                <th class="px-6 py-3">Horário</th>
-                {% for dia in form.dias %}
-                  <th class="px-6 py-3">{{ dia|date:"d/m" }}</th>
-                {% endfor %}
-              </tr>
-            </thead>
-            <tbody>
-              {% for hora in form.horarios %}
-                <tr>
-                  <td class="px-6 py-3 whitespace-nowrap">{{ hora }}</td>
-                  {% for dia in form.dias %}
-                    <td class="px-6 py-3 text-center align-middle">
-                      {% with nome=dia|stringformat:"s"|add:"|"|add:hora %}
-                        {{ form|field_by_name:nome }}
-                      {% endwith %}
-                    </td>
-                  {% endfor %}
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        <button type="submit" name="submit_horarios" class="bg-red-800 text-white py-2 px-4 rounded hover:bg-red-900 mt-4">Salvar Disponibilidade</button>
-      </form>
-    </div>
-
-    <h2 class="font-semibold text-gray-900 text-2xl mt-8 mb-4">Horários Agendados</h2>
-    <tbody>
-      {% for aula in aulas_agendadas %}
-        <tr>
-          <td class="border px-2 py-1">{{ aula.horario.data|date:"d/m/Y" }}</td>
-          <td class="border px-2 py-1">{{ aula.horario.hora }}</td>
-          <td class="border px-2 py-1">
-            {{ aula.aluno.usuario.nome }} {{ aula.aluno.usuario.sobrenome }}
-          </td>
-          <td class="border px-2 py-1">
-            {{ aula.aluno.usuario.email }}
-          </td>
-          <td class="border px-2 py-1">
-            <span class="font-semibold">
-              {% if aula.status == 'agendada' %}Agendada
-              {% elif aula.status == 'realizada' %}Concluída
-              {% else %}Cancelada
-              {% endif %}
-            </span>
-          </td>
-          <td class="border px-2 py-1">
-            {% if aula.status == 'agendada' %}
-              <form method="post" action="{% url 'agendamentos:marcar_aula_concluida' aula.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="text-green-700 hover:underline">Concluir</button>
-              </form>
-              <form method="post" action="{% url 'agendamentos:cancelar_aula' aula.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="text-red-700 hover:underline">Cancelar</button>
-              </form>
-            {% elif aula.status == 'realizada' or aula.status == 'cancelada' %}
-              <form method="post" action="{% url 'agendamentos:excluir_aula' aula.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="text-gray-500 hover:text-red-700 hover:underline">Excluir</button>
-              </form>
-            {% endif %}
-          </td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="6" class="border px-2 py-1 text-center text-gray-500">Nenhum horário agendado.</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-    </div>
+  </div>
+</div>
+  
 </main>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Preview da imagem de perfil
-    const fileInput = document.getElementById('{{ profile_form.foto_perfil.id_for_label }}');
-    const imagePreview = document.getElementById('image-preview');
-    if (fileInput && imagePreview) {
-        fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
-    // Tabs de navegação
+document.addEventListener('DOMContentLoaded', function() {
     const tabButtons = document.querySelectorAll('.tab-button');
-    const activeClasses = ['border-red-500', 'text-gray-900'];
-    const inactiveClasses = ['border-transparent', 'text-gray-500'];
-    tabButtons.forEach(clickedButton => {
-        clickedButton.addEventListener('click', () => {
-            tabButtons.forEach(button => {
-                button.classList.remove(...activeClasses);
-                button.classList.add(...inactiveClasses);
-            });
-            clickedButton.classList.remove(...inactiveClasses);
-            clickedButton.classList.add(...activeClasses);
+    const tabContents = {
+        'aulas': document.getElementById('tab-content-aulas'),
+        'config': document.getElementById('tab-content-config')
+    };
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove classes de todas as abas
+            tabButtons.forEach(b => b.classList.remove('text-gray-900', 'border-red-500'));
+            tabButtons.forEach(b => b.classList.add('text-gray-500', 'border-transparent'));
+
+            // Ativa a aba clicada
+            btn.classList.remove('text-gray-500', 'border-transparent');
+            btn.classList.add('text-gray-900', 'border-red-500');
+
+            // Esconde todos os conteúdos
+            Object.values(tabContents).forEach(div => div.classList.add('hidden'));
+            // Mostra o conteúdo da aba clicada
+            const tab = btn.getAttribute('data-tab');
+            tabContents[tab].classList.remove('hidden');
         });
     });
-
-    // Adicionar temas dinamicamente à lista (não salvos ainda)
-    const addTemaBtn = document.getElementById('add-tema-btn');
-    const novoTemaInput = document.getElementById('novo-tema-input');
-    const temasList = document.getElementById('temas-list');
-
-    addTemaBtn.addEventListener('click', function() {
-        const tema = novoTemaInput.value.trim();
-        if (tema) {
-            // Cria o elemento li com fundo vermelho
-            const li = document.createElement('li');
-            li.className = 'bg-red-200 px-3 py-1 rounded-full text-gray-800 text-sm flex items-center gap-2';
-            li.innerHTML = `
-                ${tema}
-                <button type="button" class="ml-2 text-red-600 hover:text-red-800 remove-tema-btn" title="Remover tema">
-                  <i class="fa-solid fa-xmark"></i>
-                </button>
-                <input type="hidden" name="temas[]" value="${tema}">
-            `;
-            temasList.appendChild(li);
-            novoTemaInput.value = '';
-        }
-    });
-
-    // Remover temas adicionados dinamicamente (não salvos)
-    temasList.addEventListener('click', function(e) {
-        if (e.target.closest('.remove-tema-btn')) {
-            e.target.closest('li').remove();
-        }
-    });
-    // Remover temas já salvos (marcar para remoção)
-    temasList.addEventListener('click', function(e) {
-        if (e.target.closest('.remove-tema-salvo-btn')) {
-            const li = e.target.closest('li');
-            // Adiciona um campo hidden para indicar remoção
-            const temaId = li.getAttribute('data-tema-id');
-            const inputRemover = document.createElement('input');
-            inputRemover.type = 'hidden';
-            inputRemover.name = 'remover_temas[]';
-            inputRemover.value = temaId;
-            li.appendChild(inputRemover);
-            // Esconde o tema visualmente
-            li.style.display = 'none';
-        }
-        if (e.target.closest('.remove-tema-btn')) {
-            e.target.closest('li').remove();
-        }
-    });
-
-  });
-  </script>
+});
+</script>
 {% endblock %}
 

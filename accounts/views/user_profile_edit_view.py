@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
-from accounts.models import PerfilProfessor
+from accounts.models import PerfilProfessor, PerfilAluno
 from accounts.forms.user_form import CustomPasswordChangeForm, CustomUserCreationForm, UserProfileUpdateForm
 from accounts.forms import PerfilProfessorForm, HorarioDisponivelForm
 from django.contrib.auth.forms import PasswordChangeForm
@@ -34,6 +34,10 @@ class UserProfileEditView(LoginRequiredMixin, TemplateView):
             context['professor_form'] = PerfilProfessorForm(instance=perfil_professor)
             context['form'] = HorarioDisponivelForm(professor=perfil_professor)
             context['aulas_agendadas'] = Aula.objects.filter(professor=perfil_professor).select_related('aluno', 'horario')
+        
+        elif usuario.tipo == 'aluno':
+            perfil_aluno = usuario.aluno_profile
+            context['aulas_agendadas'] = Aula.objects.filter(aluno=perfil_aluno).select_related('professor__usuario', 'horario')
 
         return context
 

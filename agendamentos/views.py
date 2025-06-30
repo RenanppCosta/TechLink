@@ -46,15 +46,15 @@ class AulaConcluirView(LoginRequiredMixin, View):
         aula.status = 'realizada'
         aula.save()
         return redirect('accounts:self_user_profile')
-
+    
 class AulaCancelarView(LoginRequiredMixin, View):
     def post(self, request, aula_id):
         aula = get_object_or_404(Aula, id=aula_id)
         aula.status = 'cancelada'
         aula.save()
+        aula.horario.disponivel = True
+        aula.horario.save()
         return redirect('accounts:self_user_profile')
-    
-
 
 class AulaExcluirView(LoginRequiredMixin, View):
     def post(self, request, aula_id):
