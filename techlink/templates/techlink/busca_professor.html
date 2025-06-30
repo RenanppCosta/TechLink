@@ -14,11 +14,11 @@
   <div class="w-full px-4 py-8" style="background-color: #FDFCF6;"> {% if professores %}
     {% if search_query %}
         <h1 class="text-5xl font-medium text-gray-900 text-center mb-6">
-          Instrutores em {{ search_query }}
+          Top Instrutores em {{ search_query }}
         </h1>
     {% else %}
         <h1 class="text-5xl font-medium text-gray-900 text-center mb-6">
-          Todos os nossos instrutores
+           Nossos Top instrutores
         </h1>
     {% endif %}
     <div class="flex flex-wrap justify-center gap-8 mt-3">
@@ -40,7 +40,7 @@
                 </div>
                 <div class="border-t border-gray-200 bg-gray-50">
                   <div class="px-6 py-3">
-                    <p class="text-sm font-medium text-gray-700">854 Alunos</p>
+                    <p class="text-sm font-medium text-gray-700">{{prof.quantidade_aulas}} aulas</p>
                   </div>
                 </div>
               </div>
@@ -80,7 +80,7 @@
                     name="ordenar" 
                     class="w-full md:w-auto border-gray-300 py-3 pl-4 pr-8 text-base border border-gray-300"
                     onchange="this.form.submit()">
-                    <option value="">Mais Populares</option>
+                    <option value="popular">Mais Populares</option>
                     <option value="asc" {% if request.GET.ordenar == "asc" %}selected{% endif %}>Nome (A-Z)</option>
                     <option value="desc" {% if request.GET.ordenar == "desc" %}selected{% endif %}>Nome (Z-A)</option>
                 </select>
@@ -122,7 +122,7 @@
                         </div>
                         <div class="border-t border-gray-200 bg-gray-50">
                             <div class="px-6 py-3">
-                                <p class="text-sm font-medium text-gray-700">854 Alunos</p>
+                                <p class="text-sm font-medium text-gray-700">{{prof.quantidade_aulas}} aulas</p>
                             </div>
                         </div>
                     </div>
