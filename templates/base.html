@@ -26,8 +26,10 @@
     </header> <!-->
      <header class="hidden md:flex justify-between p-4 border-b-gray-200 border-b">
         <div class="flex items-center gap-2">
-            <img src="{% static 'img/GraduationCap.svg' %}" alt="Chapéu de graduação">
-            <h1 class="font-semibold text-gray-900 text-3xl">TechLink</h1>
+            <a href="{% url 'techlink:home' %}" class="flex items-center gap-2 mr-4">
+                <img src="{% static 'img/GraduationCap.svg' %}" alt="Chapéu de graduação">
+                <h1 class="font-semibold text-gray-900 text-3xl">TechLink</h1>
+            </a>
            <form method="get" action="{% url 'techlink:buscar' %}" class="w-full max-w-xl mx-auto ml-8">
     
                 <div class="relative w-full">
@@ -52,12 +54,19 @@
         </div>
         {% if user.is_authenticated %}
             <div class="flex gap-3 items-center">
-                 <span>Bem vindo, {{user.nome}}</span>
-                 {% if usuario.foto_perfil %}
-                    <img src="{{ user.foto_perfil.url }}" alt="Imagem perfil" class="h-[48px] w-[48px] rounded-full object-cover">
-                {% else %}
-                    <img src="{% static 'img/default-avatar.jpg' %}" alt="Imagem perfil" class="h-[48px] w-[48px] rounded-full object-cover">
-                {% endif %}
+                <a href="{% url 'accounts:self_user_profile' %}" class="flex items-center gap-2 mx-4">
+                    <span>Bem vindo, {{ user.nome }}</span>
+                    {% if usuario.foto_perfil %}
+                        <img src="{{ user.foto_perfil.url }}" alt="Imagem perfil" class="h-[48px] w-[48px] rounded-full object-cover">
+                    {% else %}
+                        <img src="{% static 'img/default-avatar.jpg' %}" alt="Imagem perfil" class="h-[48px] w-[48px] rounded-full object-cover">
+                    {% endif %}
+                </a>
+                <form action="{% url 'accounts:logout' %}" method="post" class="w-full">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full text-red-700 px-3 py-3 font-semibold text-sm cursor-pointer">Sair</button>
+                </form>
+                
             </div>
         {% else %}
             <div class="flex gap-3 items-center">
@@ -94,12 +103,18 @@
 
             {% if user.is_authenticated %}
                 <div class="flex flex-col items-center gap-3 pt-2 border-t border-gray-300">
-                    <span class="text-xl text-gray-900 font-medium">Bem vindo, {{user.nome}}</span>
-                    {% if usuario.foto_perfil %}
-                        <img src="{{ user.foto_perfil.url }}" alt="Imagem perfil" class="h-[64px] w-[64px] rounded-full object-cover">
-                    {% else %}
-                        <img src="{% static 'img/default-avatar.jpg' %}" alt="Imagem perfil" class="h-[64px] w-[64px] rounded-full object-cover">
-                    {% endif %}
+                    <a href="{% url 'accounts:self_user_profile' %}" class="flex items-center gap-2">
+                        <span class="text-xl text-gray-900 font-medium">Bem vindo, {{ user.nome }}</span>
+                        {% if usuario.foto_perfil %}
+                            <img src="{{ user.foto_perfil.url }}" alt="Imagem perfil" class="h-[64px] w-[64px] rounded-full object-cover">
+                        {% else %}
+                            <img src="{% static 'img/default-avatar.jpg' %}" alt="Imagem perfil" class="h-[64px] w-[64px] rounded-full object-cover">
+                        {% endif %}
+                    </a>
+                    <form action="{% url 'accounts:logout' %}" method="post" class="w-full">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full bg-red-900 text-white px-5 py-3 font-semibold text-sm">Sair</button>
+                    </form>
                 </div>
             {% else %}
                 <div class="flex flex-col gap-3 pt-2 border-t">
