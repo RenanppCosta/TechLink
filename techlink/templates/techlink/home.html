@@ -17,9 +17,13 @@
  <header class="bg-[#f5eee3bd] py-10 px-5 text-center md:py-[60px] md:px-5 md:text-left">
         <h1 class=" [-webkit-text-stroke:1px_black] text-[50px] font-bold leading-tight text-[#1D2026] md:text-[80px] lg:text-[100px] md:leading-normal mb-[10px] max-w-[90%] mx-auto md:max-w-none md:mx-0 md:ml-[100px] lg:ml-[265px]">Aprenda em qualquer lugar</h1>
         <p class="text-lg font-normal text-[#4E5566] md:text-[25px] mb-7 max-w-[90%] mx-auto md:max-w-[600px] md:mx-0 md:ml-[100px] lg:ml-[265px]">Transformamos vidas ao conectar pessoas aos melhores instrutores online, para que aprendam e cresçam onde estiverem, quando quiserem.</p>
-        <a href="cadastro.html">
+        
+        
+        {% if not user.is_authenticated %}
+        <a href="{% url 'accounts:register' %}">
             <button class="bg-[#C90A02] hover:bg-red-800 font-semibold transition-colors text-white py-4 px-10 text-[15px] rounded-none cursor-pointer mx-auto md:mx-0 md:ml-[100px] lg:ml-[265px]">Crie Sua Conta</button>
         </a>
+        {% endif %}
     </header>
 
     <div class="max-w-[1320px] mx-auto mt-16 px-4 flex flex-wrap lg:flex-nowrap gap-8 justify-center items-stretch">
