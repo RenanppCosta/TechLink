@@ -24,7 +24,9 @@ load_dotenv()
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_API_KEY= os.getenv("STRIPE_API_KEY")
 ABACATE_PAY_API_KEY= os.getenv("ABACATE_PAY_API_KEY")
-
+print("STRIPE_API_KEY:", os.getenv("STRIPE_API_KEY"))
+print("STRIPE_PUBLISHABLE_KEY:", os.getenv("STRIPE_PUBLISHABLE_KEY"))
+print("ABACATE_PAY_API_KEY:", os.getenv("ABACATE_PAY_API_KEY"))
 
 
 # Quick-start development settings - unsuitable for production
