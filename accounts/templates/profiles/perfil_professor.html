@@ -217,30 +217,32 @@
       <h2 class="font-semibold text-gray-900 text-2xl mb-6">Disponibilidade de Horários</h2>
       <form method="post">
         {% csrf_token %}
-        <table class="mb-6 w-full border-separate border-spacing-3">
-          <thead>
-            <tr>
-              <th class="px-6 py-3">Horário</th>
-              {% for dia in form.dias %}
-                <th class="px-6 py-3">{{ dia|date:"d/m" }}</th>
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for hora in form.horarios %}
+        <div class="overflow-x-auto">
+          <table class="mb-6 w-full min-w-[600px] border-separate border-spacing-3 text-sm md:text-base">
+            <thead>
               <tr>
-                <td class="px-6 py-3 whitespace-nowrap">{{ hora }}</td>
+                <th class="px-6 py-3">Horário</th>
                 {% for dia in form.dias %}
-                  <td class="px-6 py-3 text-center align-middle">
-                    {% with nome=dia|stringformat:"s"|add:"|"|add:hora %}
-                      {{ form|field_by_name:nome }}
-                    {% endwith %}
-                  </td>
+                  <th class="px-6 py-3">{{ dia|date:"d/m" }}</th>
                 {% endfor %}
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {% for hora in form.horarios %}
+                <tr>
+                  <td class="px-6 py-3 whitespace-nowrap">{{ hora }}</td>
+                  {% for dia in form.dias %}
+                    <td class="px-6 py-3 text-center align-middle">
+                      {% with nome=dia|stringformat:"s"|add:"|"|add:hora %}
+                        {{ form|field_by_name:nome }}
+                      {% endwith %}
+                    </td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
         <button type="submit" name="submit_horarios" class="bg-red-800 text-white py-2 px-4 rounded hover:bg-red-900 mt-4">Salvar Disponibilidade</button>
       </form>
     </div>
