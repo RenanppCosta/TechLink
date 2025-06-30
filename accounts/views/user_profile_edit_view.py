@@ -87,7 +87,7 @@ class UserProfileEditView(LoginRequiredMixin, TemplateView):
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
-                return redirect('accounts:user_profile')
+                return redirect('accounts:self_user_profile')
 
             context = self.get_context_data()
             context['password_form'] = password_form
