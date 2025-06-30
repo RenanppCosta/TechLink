@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, PerfilProfessor, Tema
+from .models import CustomUser, PerfilProfessor, Tema, PerfilAluno
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
@@ -53,6 +53,12 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
+class PerfilAlunoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'usuario',)
+    search_fields = ('usuario__nome', 'usuario__email')
+    raw_id_fields = ('usuario',)
+
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(PerfilProfessor)
 admin.site.register(Tema)
+admin.site.register(PerfilAluno, PerfilAlunoAdmin)

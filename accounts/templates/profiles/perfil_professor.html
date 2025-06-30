@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% load dict_extras %}
+{% load form_extras %}
 
 {% block titles %}
     Techlink | Seu Perfil
@@ -208,6 +210,85 @@
           <button type="submit" name="submit_professor" class="bg-red-800 text-white py-2 px-4 cursor-pointer hover:bg-red-900">Salvar Perfil de Professor</button>
         </div>
       </form>
+    </div>
+
+    <!-- Formulário de horários disponíveis -->
+    <div class="w-full flex flex-col justify-start max-w-[1320px] px-4 mb-12 mt-12">
+      <h2 class="font-semibold text-gray-900 text-2xl mb-6">Disponibilidade de Horários</h2>
+      <form method="post">
+        {% csrf_token %}
+        <table class="mb-6 w-full border-separate border-spacing-3">
+          <thead>
+            <tr>
+              <th class="px-6 py-3">Horário</th>
+              {% for dia in form.dias %}
+                <th class="px-6 py-3">{{ dia|date:"d/m" }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for hora in form.horarios %}
+              <tr>
+                <td class="px-6 py-3 whitespace-nowrap">{{ hora }}</td>
+                {% for dia in form.dias %}
+                  <td class="px-6 py-3 text-center align-middle">
+                    {% with nome=dia|stringformat:"s"|add:"|"|add:hora %}
+                      {{ form|field_by_name:nome }}
+                    {% endwith %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <button type="submit" name="submit_horarios" class="bg-red-800 text-white py-2 px-4 rounded hover:bg-red-900 mt-4">Salvar Disponibilidade</button>
+      </form>
+    </div>
+
+    <h2 class="font-semibold text-gray-900 text-2xl mt-8 mb-4">Horários Agendados</h2>
+    <tbody>
+      {% for aula in aulas_agendadas %}
+        <tr>
+          <td class="border px-2 py-1">{{ aula.horario.data|date:"d/m/Y" }}</td>
+          <td class="border px-2 py-1">{{ aula.horario.hora }}</td>
+          <td class="border px-2 py-1">
+            {{ aula.aluno.usuario.nome }} {{ aula.aluno.usuario.sobrenome }}
+          </td>
+          <td class="border px-2 py-1">
+            {{ aula.aluno.usuario.email }}
+          </td>
+          <td class="border px-2 py-1">
+            <span class="font-semibold">
+              {% if aula.status == 'agendada' %}Agendada
+              {% elif aula.status == 'realizada' %}Concluída
+              {% else %}Cancelada
+              {% endif %}
+            </span>
+          </td>
+          <td class="border px-2 py-1">
+            {% if aula.status == 'agendada' %}
+              <form method="post" action="{% url 'agendamentos:marcar_aula_concluida' aula.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="text-green-700 hover:underline">Concluir</button>
+              </form>
+              <form method="post" action="{% url 'agendamentos:cancelar_aula' aula.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="text-red-700 hover:underline">Cancelar</button>
+              </form>
+            {% elif aula.status == 'realizada' or aula.status == 'cancelada' %}
+              <form method="post" action="{% url 'agendamentos:excluir_aula' aula.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="text-gray-500 hover:text-red-700 hover:underline">Excluir</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6" class="border px-2 py-1 text-center text-gray-500">Nenhum horário agendado.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
     </div>
 </main>
 

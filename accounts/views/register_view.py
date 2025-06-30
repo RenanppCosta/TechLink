@@ -3,6 +3,7 @@ from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from accounts.forms import CustomUserCreationForm, PerfilProfessorForm
 from accounts.models import Tema
+from accounts.models.perfil_aluno import PerfilAluno
 
 class RegisterView(FormView):
     template_name = 'accounts/register.html'
@@ -38,6 +39,8 @@ class RegisterView(FormView):
                             tema, _ = Tema.objects.get_or_create(nome=nome)
                             temas_objs.append(tema)
                     perfil_professor.temas.set(temas_objs)
+            elif user.tipo == 'aluno':
+                PerfilAluno.objects.create(usuario=user)
             return redirect(self.success_url)
         return render(request, self.template_name, {
             'profile_form': profile_form,

@@ -73,97 +73,85 @@
             {% endfor %}
         </div>
         <div>
-            {% for hora in horarios %}
-            <div class="flex items-center">
-                <div class="horario-label w-20 text-right pr-2">{{ hora }}</div>
-                {% for dia in dias %}
-                {% with status=agenda|dict_get:dia|dict_get:hora %}
-                    <div class="celula flex-1 text-center py-2
-                        {% if status == 'agendado' %} bg-red-200
-                        {% elif status == 'disponivel' %} bg-green-200 cursor-pointer hover:bg-green-300
-                        {% else %} bg-gray-100
-                        {% endif %}">
-                        {{ status }}
-                    </div>
-                {% endwith %}
-                {% endfor %}
-            </div>
+        {% for hora in horarios %}
+          <div class="flex items-center">
+            <div class="horario-label w-20 text-right pr-2">{{ hora }}</div>
+            {% for dia in dias %}
+              {% with disponivel=agenda|dict_get:dia|dict_get:hora %}
+                <div
+                  class="celula flex-1 text-center py-2
+                    {% if disponivel %} bg-green-200 cursor-pointer hover:bg-green-300
+                    {% else %} bg-red-200 cursor-not-allowed
+                    {% endif %}"
+                  {% if disponivel %}
+                    data-dia="{{ dia }}" data-hora="{{ hora }}"
+                    onclick="selecionarCelula(this)"
+                  {% endif %}
+                >
+                  <span class="celula-text">{% if disponivel %}disponível{% else %}indisponível{% endif %}</span>
+                </div>
+              {% endwith %}
             {% endfor %}
+          </div>
+        {% endfor %}
         </div>
+        <form id="form-agendamento" method="post" action="{% url 'agendamentos:criar_agendamento' perfil_professor.id %}">
+          {% csrf_token %}
+          <input type="hidden" name="horarios" id="input-horarios">
+        </form>
         </div>
 
         <div class="btn-wrapper">
             <button id="btn-confirmar">Confirmar agendamento</button>
         </div>
+
+        {% if erro_permissao %}
+          <script>
+            alert("Permissão negada: apenas alunos podem agendar aulas.");
+          </script>
+        {% endif %}
     </section>
   </div>
 </main>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const gradeCorpo = document.getElementById("grade-corpo");
-    const btnConfirmar = document.getElementById("btn-confirmar");
+document.addEventListener("DOMContentLoaded", () => {
+  const btnConfirmar = document.getElementById("btn-confirmar");
+  const selecionados = [];
 
-    const dias = ["Dom 23", "Seg 24", "Ter 25", "Qua 26", "Qui 27"];
-    const horarios = Array.from({ length: 17 }, (_, i) => `${6 + i}:00`);
+  // Seleciona todas as células disponíveis
+  document.querySelectorAll('.celula[data-dia][data-hora]').forEach(celula => {
+    celula.addEventListener('click', function() {
+      const dia = this.getAttribute('data-dia');
+      const hora = this.getAttribute('data-hora');
+      const key = `${dia}-${hora}`;
+      const span = this.querySelector('.celula-text');
+      const idx = selecionados.indexOf(key);
 
-    const statusHorarios = {
-      "Dom 23-7:00": "disponivel",
-      "Dom 23-8:00": "agendado",
-      "Seg 24-9:00": "disponivel",
-      "Ter 25-10:00": "agendado",
-      "Qua 26-11:00": "disponivel",
-      "Qua 26-14:00": "disponivel",
-      "Qui 27-15:00": "disponivel",
-    };
-
-    const selecionados = [];
-
-    horarios.forEach(hora => {
-      const label = document.createElement("div");
-      label.classList.add("horario-label");
-      label.textContent = hora;
-      gradeCorpo.appendChild(label);
-
-      dias.forEach(dia => {
-        const key = `${dia}-${hora}`;
-        const div = document.createElement("div");
-        div.classList.add("celula");
-
-        const status = statusHorarios[key];
-
-        if (status === "agendado") {
-          div.classList.add("vermelho");
-        } else if (status === "disponivel") {
-          div.classList.add("verde");
-          div.addEventListener("click", () => {
-            const idx = selecionados.indexOf(key);
-            if (idx > -1) {
-              selecionados.splice(idx, 1);
-              div.classList.remove("verde-escuro");
-              div.classList.add("verde");
-            } else {
-              selecionados.push(key);
-              div.classList.remove("verde");
-              div.classList.add("verde-escuro");
-            }
-          });
-        } else {
-          div.classList.add("branco");
-        }
-
-        gradeCorpo.appendChild(div);
-      });
-    });
-
-    btnConfirmar.addEventListener("click", () => {
-      if (selecionados.length > 0) {
-        console.log("Horários selecionados:", selecionados);
-        window.location.href = "/metodo-de-pagamento.html";
+      if (idx > -1) {
+        // Desmarca
+        selecionados.splice(idx, 1);
+        this.classList.remove('bg-green-700');
+        this.classList.add('bg-green-200');
+        span.textContent = 'disponivel';
       } else {
-        alert("Selecione ao menos um horário.");
+        // Marca
+        selecionados.push(key);
+        this.classList.remove('bg-green-200');
+        this.classList.add('bg-green-700');
+        span.textContent = hora;
       }
     });
   });
+
+  btnConfirmar.addEventListener("click", function(e) {
+    if (selecionados.length > 0) {
+      document.getElementById("input-horarios").value = selecionados.join(",");
+      document.getElementById("form-agendamento").submit();
+    } else {
+      alert("Selecione ao menos um horário.");
+    }
+  });
+});
 </script>
 {% endblock %}
